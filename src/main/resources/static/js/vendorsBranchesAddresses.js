@@ -248,4 +248,9 @@ async function init() {
   }
 }
 
+
+function goToDetails(id) {
+  window.location.href = `Member3Page2.html?id=${id}`;
+}
+
 document.addEventListener('DOMContentLoaded', init);
