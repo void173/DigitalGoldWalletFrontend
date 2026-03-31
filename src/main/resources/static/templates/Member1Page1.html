@@ -1,0 +1,969 @@
+<!--&lt;!&ndash;<!DOCTYPE html>&ndash;&gt;-->
+<!--&lt;!&ndash;<html>&ndash;&gt;-->
+<!--&lt;!&ndash;<head>&ndash;&gt;-->
+<!--&lt;!&ndash;    <title>Users Table</title>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <style>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        table{&ndash;&gt;-->
+<!--&lt;!&ndash;            border-collapse: collapse;&ndash;&gt;-->
+<!--&lt;!&ndash;            width:85%;&ndash;&gt;-->
+<!--&lt;!&ndash;            margin:30px auto;&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+
+<!--&lt;!&ndash;        th,td{&ndash;&gt;-->
+<!--&lt;!&ndash;            border:1px solid black;&ndash;&gt;-->
+<!--&lt;!&ndash;            padding:8px;&ndash;&gt;-->
+<!--&lt;!&ndash;            text-align:center;&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+
+<!--&lt;!&ndash;        th{&ndash;&gt;-->
+<!--&lt;!&ndash;            background:#f2f2f2;&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+
+<!--&lt;!&ndash;        h2{&ndash;&gt;-->
+<!--&lt;!&ndash;            text-align:center;&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+
+<!--&lt;!&ndash;        .top-bar{&ndash;&gt;-->
+<!--&lt;!&ndash;            text-align:center;&ndash;&gt;-->
+<!--&lt;!&ndash;            margin-bottom:15px;&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+
+<!--&lt;!&ndash;        button{&ndash;&gt;-->
+<!--&lt;!&ndash;            padding:5px 10px;&ndash;&gt;-->
+<!--&lt;!&ndash;            cursor:pointer;&ndash;&gt;-->
+<!--&lt;!&ndash;            border:none;&ndash;&gt;-->
+<!--&lt;!&ndash;            border-radius:4px;&ndash;&gt;-->
+<!--&lt;!&ndash;            background:#007bff;&ndash;&gt;-->
+<!--&lt;!&ndash;            color:white;&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+
+<!--&lt;!&ndash;        button:hover{&ndash;&gt;-->
+<!--&lt;!&ndash;            background:#0056b3;&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+
+<!--&lt;!&ndash;        .search-container{&ndash;&gt;-->
+<!--&lt;!&ndash;            display:flex;&ndash;&gt;-->
+<!--&lt;!&ndash;            justify-content:center;&ndash;&gt;-->
+<!--&lt;!&ndash;            align-items:center;&ndash;&gt;-->
+<!--&lt;!&ndash;            gap:5px;&ndash;&gt;-->
+<!--&lt;!&ndash;            margin-top:5px;&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+
+<!--&lt;!&ndash;        .search-box{&ndash;&gt;-->
+<!--&lt;!&ndash;            width:120px;&ndash;&gt;-->
+<!--&lt;!&ndash;            padding:4px;&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+
+<!--&lt;!&ndash;        .pagination{&ndash;&gt;-->
+<!--&lt;!&ndash;            text-align:center;&ndash;&gt;-->
+<!--&lt;!&ndash;            margin-top:20px;&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+
+<!--&lt;!&ndash;        .page-btn{&ndash;&gt;-->
+<!--&lt;!&ndash;            padding:6px 10px;&ndash;&gt;-->
+<!--&lt;!&ndash;            margin:3px;&ndash;&gt;-->
+<!--&lt;!&ndash;            border:1px solid black;&ndash;&gt;-->
+<!--&lt;!&ndash;            cursor:pointer;&ndash;&gt;-->
+<!--&lt;!&ndash;            background:white;&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+
+<!--&lt;!&ndash;        .active{&ndash;&gt;-->
+<!--&lt;!&ndash;            background:black;&ndash;&gt;-->
+<!--&lt;!&ndash;            color:white;&ndash;&gt;-->
+<!--&lt;!&ndash;        }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    </style>&ndash;&gt;-->
+<!--&lt;!&ndash;</head>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<body>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<h2>Users Table</h2>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<div class="top-bar">&ndash;&gt;-->
+<!--&lt;!&ndash;    <button onclick="openAddUser()">Add User</button>&ndash;&gt;-->
+<!--&lt;!&ndash;</div>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<table>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <thead>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <tr>&ndash;&gt;-->
+<!--&lt;!&ndash;        <th>Sr No</th>&ndash;&gt;-->
+<!--&lt;!&ndash;        <th>User ID</th>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <th>&ndash;&gt;-->
+<!--&lt;!&ndash;            Name&ndash;&gt;-->
+<!--&lt;!&ndash;            <div class="search-container">&ndash;&gt;-->
+<!--&lt;!&ndash;                <input id="nameSearch" class="search-box">&ndash;&gt;-->
+<!--&lt;!&ndash;                <button onclick="searchUsers()">Search</button>&ndash;&gt;-->
+<!--&lt;!&ndash;                <button onclick="clearSearch()">Clear</button>&ndash;&gt;-->
+<!--&lt;!&ndash;            </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        </th>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <th>&ndash;&gt;-->
+<!--&lt;!&ndash;            Email&ndash;&gt;-->
+<!--&lt;!&ndash;            <div class="search-container">&ndash;&gt;-->
+<!--&lt;!&ndash;                <input id="emailSearch" class="search-box">&ndash;&gt;-->
+<!--&lt;!&ndash;                <button onclick="searchUsers()">Search</button>&ndash;&gt;-->
+<!--&lt;!&ndash;                <button onclick="clearSearch()">Clear</button>&ndash;&gt;-->
+<!--&lt;!&ndash;            </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        </th>&ndash;&gt;-->
+
+<!--&lt;!&ndash;        <th>Balance</th>&ndash;&gt;-->
+<!--&lt;!&ndash;        <th>Created At</th>&ndash;&gt;-->
+<!--&lt;!&ndash;        <th>Deposit</th>&ndash;&gt;-->
+<!--&lt;!&ndash;        <th>Update</th>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    </tr>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    </thead>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <tbody id="usersTable"></tbody>&ndash;&gt;-->
+
+<!--&lt;!&ndash;</table>&ndash;&gt;-->
+
+<!--&lt;!&ndash;<div id="pagination" class="pagination"></div>&ndash;&gt;-->
+
+
+<!--&lt;!&ndash;<script>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    const BASE_URL="http://localhost:8080/users";&ndash;&gt;-->
+<!--&lt;!&ndash;    const DEPOSIT_URL="http://localhost:8080/user/deposit";&ndash;&gt;-->
+
+<!--&lt;!&ndash;    let currentPage=0;&ndash;&gt;-->
+<!--&lt;!&ndash;    let currentURL=BASE_URL;&ndash;&gt;-->
+
+
+<!--&lt;!&ndash;    /* LOAD USERS */&ndash;&gt;-->
+
+<!--&lt;!&ndash;    function loadUsers(page=0){&ndash;&gt;-->
+
+<!--&lt;!&ndash;    currentPage=page;&ndash;&gt;-->
+
+<!--&lt;!&ndash;    let url=currentURL.includes("?")&ndash;&gt;-->
+<!--&lt;!&ndash;    ? `${currentURL}&page=${page}&size=20`&ndash;&gt;-->
+<!--&lt;!&ndash;    : `${currentURL}?page=${page}&size=20`;&ndash;&gt;-->
+
+<!--&lt;!&ndash;    fetch(url)&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .then(res=>res.json())&ndash;&gt;-->
+
+<!--&lt;!&ndash;    .then(data=>{&ndash;&gt;-->
+
+<!--&lt;!&ndash;    const users=data._embedded.userses;&ndash;&gt;-->
+
+<!--&lt;!&ndash;    const table=document.getElementById("usersTable");&ndash;&gt;-->
+
+<!--&lt;!&ndash;    table.innerHTML="";&ndash;&gt;-->
+
+<!--&lt;!&ndash;    users.forEach((user,index)=>{&ndash;&gt;-->
+
+<!--&lt;!&ndash;    const userId=user._links.self.href.split("/").pop();&ndash;&gt;-->
+
+<!--&lt;!&ndash;    table.innerHTML+=`&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <tr onclick="viewUser(${userId})" style="cursor:pointer">&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <td>${index+1 + page*20}</td>&ndash;&gt;-->
+<!--&lt;!&ndash;    <td>${userId}</td>&ndash;&gt;-->
+<!--&lt;!&ndash;    <td>${user.name}</td>&ndash;&gt;-->
+<!--&lt;!&ndash;    <td>${user.email}</td>&ndash;&gt;-->
+<!--&lt;!&ndash;    <td>${user.balance}</td>&ndash;&gt;-->
+<!--&lt;!&ndash;    <td>${user.createdAt}</td>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <td>&ndash;&gt;-->
+<!--&lt;!&ndash;    <button onclick="deposit(${userId})">Deposit</button>&ndash;&gt;-->
+<!--&lt;!&ndash;    </td>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    <td>&ndash;&gt;-->
+<!--&lt;!&ndash;    <button onclick="updateUser(${userId},'${user.name}','${user.email}')">Update</button>&ndash;&gt;-->
+<!--&lt;!&ndash;    </td>&ndash;&gt;-->
+
+<!--&lt;!&ndash;    </tr>&ndash;&gt;-->
+<!--&lt;!&ndash;    `;&ndash;&gt;-->
+
+<!--&lt;!&ndash;    });&ndash;&gt;-->
+
+<!--&lt;!&ndash;    createPagination(data.page.totalPages);&ndash;&gt;-->
+
+<!--&lt;!&ndash;    });&ndash;&gt;-->
+
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;function viewUser(userId){&ndash;&gt;-->
+<!--&lt;!&ndash;window.location.href = "Member1Page2.html?userId=" + userId;&ndash;&gt;-->
+<!--&lt;!&ndash;}&ndash;&gt;-->
+
+
+
+<!--&lt;!&ndash;    /* PAGINATION */&ndash;&gt;-->
+
+<!--&lt;!&ndash;    function createPagination(totalPages){&ndash;&gt;-->
+
+<!--&lt;!&ndash;    const footer=document.getElementById("pagination");&ndash;&gt;-->
+
+<!--&lt;!&ndash;    footer.innerHTML="";&ndash;&gt;-->
+
+<!--&lt;!&ndash;    for(let i=0;i<totalPages;i++){&ndash;&gt;-->
+
+<!--&lt;!&ndash;    footer.innerHTML+=`&ndash;&gt;-->
+<!--&lt;!&ndash;    <button class="page-btn ${i===currentPage?'active':''}"&ndash;&gt;-->
+<!--&lt;!&ndash;    onclick="loadUsers(${i})">&ndash;&gt;-->
+
+<!--&lt;!&ndash;    ${i+1}&ndash;&gt;-->
+
+<!--&lt;!&ndash;    </button>&ndash;&gt;-->
+<!--&lt;!&ndash;    `;&ndash;&gt;-->
+
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+
+
+<!--&lt;!&ndash;    /* SEARCH */&ndash;&gt;-->
+
+<!--&lt;!&ndash;    function searchUsers(){&ndash;&gt;-->
+
+<!--&lt;!&ndash;    const name=document.getElementById("nameSearch").value;&ndash;&gt;-->
+<!--&lt;!&ndash;    const email=document.getElementById("emailSearch").value;&ndash;&gt;-->
+
+<!--&lt;!&ndash;    if(name){&ndash;&gt;-->
+
+<!--&lt;!&ndash;    currentURL=`http://localhost:8080/users/search/findByNameContainingIgnoreCase?name=${name}`;&ndash;&gt;-->
+
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    else if(email){&ndash;&gt;-->
+
+<!--&lt;!&ndash;    currentURL=`http://localhost:8080/users/search/findByEmailContainingIgnoreCase?email=${email}`;&ndash;&gt;-->
+
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+<!--&lt;!&ndash;    loadUsers(0);&ndash;&gt;-->
+
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+
+
+<!--&lt;!&ndash;    /* CLEAR SEARCH */&ndash;&gt;-->
+
+<!--&lt;!&ndash;    function clearSearch(){&ndash;&gt;-->
+
+<!--&lt;!&ndash;    document.getElementById("nameSearch").value="";&ndash;&gt;-->
+<!--&lt;!&ndash;    document.getElementById("emailSearch").value="";&ndash;&gt;-->
+
+<!--&lt;!&ndash;    currentURL=BASE_URL;&ndash;&gt;-->
+
+<!--&lt;!&ndash;    loadUsers(0);&ndash;&gt;-->
+
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+
+
+<!--&lt;!&ndash;    /* DEPOSIT */&ndash;&gt;-->
+
+<!--&lt;!&ndash;    function deposit(userId){&ndash;&gt;-->
+
+<!--&lt;!&ndash;    const amount=prompt("Enter amount");&ndash;&gt;-->
+
+<!--&lt;!&ndash;    if(!amount) return;&ndash;&gt;-->
+
+<!--&lt;!&ndash;    fetch(`${DEPOSIT_URL}/${userId}?amount=${amount}`,{&ndash;&gt;-->
+<!--&lt;!&ndash;    method:"PUT"&ndash;&gt;-->
+<!--&lt;!&ndash;    })&ndash;&gt;-->
+<!--&lt;!&ndash;    .then(()=>loadUsers(currentPage));&ndash;&gt;-->
+
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+
+
+<!--&lt;!&ndash;    /* UPDATE */&ndash;&gt;-->
+
+<!--&lt;!&ndash;    function updateUser(userId,name,email){&ndash;&gt;-->
+
+<!--&lt;!&ndash;    const newName=prompt("Enter name",name);&ndash;&gt;-->
+<!--&lt;!&ndash;    const newEmail=prompt("Enter email",email);&ndash;&gt;-->
+
+<!--&lt;!&ndash;    fetch(`${BASE_URL}/${userId}`,{&ndash;&gt;-->
+
+<!--&lt;!&ndash;    method:"PATCH",&ndash;&gt;-->
+
+<!--&lt;!&ndash;    headers:{&ndash;&gt;-->
+<!--&lt;!&ndash;    "Content-Type":"application/json"&ndash;&gt;-->
+<!--&lt;!&ndash;    },&ndash;&gt;-->
+
+<!--&lt;!&ndash;    body:JSON.stringify({&ndash;&gt;-->
+<!--&lt;!&ndash;    name:newName,&ndash;&gt;-->
+<!--&lt;!&ndash;    email:newEmail&ndash;&gt;-->
+<!--&lt;!&ndash;    })&ndash;&gt;-->
+
+<!--&lt;!&ndash;    })&ndash;&gt;-->
+<!--&lt;!&ndash;    .then(()=>loadUsers(currentPage));&ndash;&gt;-->
+
+<!--&lt;!&ndash;    }&ndash;&gt;-->
+
+
+
+<!--&lt;!&ndash;    /* ADD USER */&ndash;&gt;-->
+
+<!--&lt;!&ndash;function openAddUser(){&ndash;&gt;-->
+
+<!--&lt;!&ndash;const name=prompt("Enter name");&ndash;&gt;-->
+<!--&lt;!&ndash;const email=prompt("Enter email");&ndash;&gt;-->
+
+<!--&lt;!&ndash;if(!name || !email){&ndash;&gt;-->
+<!--&lt;!&ndash;alert("Enter name and email");&ndash;&gt;-->
+<!--&lt;!&ndash;return;&ndash;&gt;-->
+<!--&lt;!&ndash;}&ndash;&gt;-->
+
+<!--&lt;!&ndash;fetch(BASE_URL,{&ndash;&gt;-->
+<!--&lt;!&ndash;method:"POST",&ndash;&gt;-->
+<!--&lt;!&ndash;headers:{"Content-Type":"application/json"},&ndash;&gt;-->
+<!--&lt;!&ndash;body:JSON.stringify({name,email})&ndash;&gt;-->
+<!--&lt;!&ndash;})&ndash;&gt;-->
+<!--&lt;!&ndash;.then(res=>{&ndash;&gt;-->
+
+<!--&lt;!&ndash;if(!res.ok){&ndash;&gt;-->
+<!--&lt;!&ndash;alert("Email already exists!");&ndash;&gt;-->
+<!--&lt;!&ndash;throw new Error("Duplicate email");&ndash;&gt;-->
+<!--&lt;!&ndash;}&ndash;&gt;-->
+
+<!--&lt;!&ndash;return res.json();&ndash;&gt;-->
+
+<!--&lt;!&ndash;})&ndash;&gt;-->
+<!--&lt;!&ndash;.then(()=>{&ndash;&gt;-->
+<!--&lt;!&ndash;loadUsers();&ndash;&gt;-->
+<!--&lt;!&ndash;})&ndash;&gt;-->
+<!--&lt;!&ndash;.catch(err=>{&ndash;&gt;-->
+<!--&lt;!&ndash;console.log(err);&ndash;&gt;-->
+<!--&lt;!&ndash;});&ndash;&gt;-->
+
+<!--&lt;!&ndash;}&ndash;&gt;-->
+
+
+<!--&lt;!&ndash;    loadUsers();&ndash;&gt;-->
+
+<!--&lt;!&ndash;</script>&ndash;&gt;-->
+
+<!--&lt;!&ndash;</body>&ndash;&gt;-->
+<!--&lt;!&ndash;</html>&ndash;&gt;-->
+
+
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <title>Member Directory | Digital Gold</title>-->
+<!--    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">-->
+<!--    <style>-->
+<!--        :root {-->
+<!--            &#45;&#45;gold: #D4AF37;-->
+<!--            &#45;&#45;bg-dark: #0a0a0a;-->
+<!--            &#45;&#45;glass: rgba(255, 255, 255, 0.03);-->
+<!--        }-->
+
+<!--        body {-->
+<!--            background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);-->
+<!--            color: #e0e0e0;-->
+<!--            font-family: 'Inter', sans-serif;-->
+<!--            margin: 0;-->
+<!--            padding: 50px;-->
+<!--        }-->
+
+<!--        h2 {-->
+<!--            font-family: 'Playfair Display', serif;-->
+<!--            color: var(&#45;&#45;gold);-->
+<!--            text-align: center;-->
+<!--            font-size: 2.5rem;-->
+<!--            letter-spacing: 4px;-->
+<!--            margin-bottom: 10px;-->
+<!--        }-->
+
+<!--        .subtitle {-->
+<!--            text-align: center;-->
+<!--            color: #888;-->
+<!--            margin-bottom: 40px;-->
+<!--            text-transform: uppercase;-->
+<!--            font-size: 0.8rem;-->
+<!--            letter-spacing: 2px;-->
+<!--        }-->
+
+<!--        .top-bar { text-align: right; margin-bottom: 20px; width: 90%; margin-left: auto; margin-right: auto; }-->
+
+<!--        table {-->
+<!--            width: 95%;-->
+<!--            margin: 0 auto;-->
+<!--            border-collapse: separate;-->
+<!--            border-spacing: 0 12px;-->
+<!--        }-->
+
+<!--        th {-->
+<!--            color: var(&#45;&#45;gold);-->
+<!--            font-size: 0.75rem;-->
+<!--            text-transform: uppercase;-->
+<!--            padding: 20px;-->
+<!--            background: rgba(212, 175, 55, 0.05);-->
+<!--            border-bottom: 1px solid var(&#45;&#45;gold);-->
+<!--        }-->
+
+<!--        td {-->
+<!--            background: var(&#45;&#45;glass);-->
+<!--            padding: 20px;-->
+<!--            text-align: center;-->
+<!--            border-top: 1px solid rgba(255,255,255,0.05);-->
+<!--            border-bottom: 1px solid rgba(255,255,255,0.05);-->
+<!--        }-->
+
+<!--        tr:hover td { background: rgba(212, 175, 55, 0.08); cursor: pointer; }-->
+
+<!--        .search-container {-->
+<!--            display: flex;-->
+<!--            flex-direction: column;-->
+<!--            gap: 5px;-->
+<!--            margin-top: 10px;-->
+<!--        }-->
+
+<!--        input {-->
+<!--            background: #111;-->
+<!--            border: 1px solid #333;-->
+<!--            color: #fff;-->
+<!--            padding: 5px;-->
+<!--            border-radius: 3px;-->
+<!--            font-size: 0.8rem;-->
+<!--        }-->
+
+<!--        button {-->
+<!--            background: var(&#45;&#45;gold);-->
+<!--            color: #000;-->
+<!--            border: none;-->
+<!--            padding: 8px 15px;-->
+<!--            font-weight: 600;-->
+<!--            border-radius: 3px;-->
+<!--            cursor: pointer;-->
+<!--            font-size: 0.7rem;-->
+<!--            text-transform: uppercase;-->
+<!--        }-->
+
+<!--        .btn-outline {-->
+<!--            background: transparent;-->
+<!--            border: 1px solid var(&#45;&#45;gold);-->
+<!--            color: var(&#45;&#45;gold);-->
+<!--            margin-left: 5px;-->
+<!--        }-->
+
+<!--        .pagination { text-align: center; margin-top: 30px; }-->
+<!--        .page-btn {-->
+<!--            background: transparent;-->
+<!--            border: 1px solid #444;-->
+<!--            color: #fff;-->
+<!--            width: 35px;-->
+<!--            height: 35px;-->
+<!--            margin: 0 5px;-->
+<!--            border-radius: 50%;-->
+<!--        }-->
+<!--        .page-btn.active { border-color: var(&#45;&#45;gold); color: var(&#45;&#45;gold); }-->
+
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<h2>Vault Members</h2>-->
+<!--<div class="subtitle">Digital Finance • Gold Backed</div>-->
+
+<!--<div class="top-bar">-->
+<!--    <button onclick="openAddUser()">+ Create New Account</button>-->
+<!--</div>-->
+
+<!--<table>-->
+<!--    <thead>-->
+<!--    <tr>-->
+<!--        <th>Sr.</th>-->
+<!--        <th>UID</th>-->
+<!--        <th>-->
+<!--            Name-->
+<!--            <div class="search-container">-->
+<!--                <input id="nameSearch" placeholder="Filter name...">-->
+<!--                <div>-->
+<!--                    <button onclick="searchUsers()">Find</button>-->
+<!--                    <button class="btn-outline" onclick="clearSearch()">Clear</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </th>-->
+<!--        <th>-->
+<!--            Email-->
+<!--            <div class="search-container">-->
+<!--                <input id="emailSearch" placeholder="Filter email...">-->
+<!--                <div>-->
+<!--                    <button onclick="searchUsers()">Find</button>-->
+<!--                    <button class="btn-outline" onclick="clearSearch()">Clear</button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </th>-->
+<!--        <th>Balance</th>-->
+<!--        <th>Joined</th>-->
+<!--        <th>Management</th>-->
+<!--    </tr>-->
+<!--    </thead>-->
+<!--    <tbody id="usersTable"></tbody>-->
+<!--</table>-->
+
+<!--<div id="pagination" class="pagination"></div>-->
+
+<!--<script>-->
+<!--    const BASE_URL="http://localhost:8080/users";-->
+<!--    const DEPOSIT_URL="http://localhost:8080/user/deposit";-->
+<!--    let currentPage=0;-->
+<!--    let currentURL=BASE_URL;-->
+
+<!--    function loadUsers(page=0){-->
+<!--        currentPage=page;-->
+<!--        let url=currentURL.includes("?") ? `${currentURL}&page=${page}&size=20` : `${currentURL}?page=${page}&size=20`;-->
+<!--        fetch(url).then(res=>res.json()).then(data=>{-->
+<!--            const users=data._embedded.userses;-->
+<!--            const table=document.getElementById("usersTable");-->
+<!--            table.innerHTML="";-->
+<!--            users.forEach((user,index)=>{-->
+<!--                const userId=user._links.self.href.split("/").pop();-->
+<!--                table.innerHTML+=`-->
+<!--                    <tr onclick="viewUser(${userId})">-->
+<!--                        <td>${index+1 + page*20}</td>-->
+<!--                        <td style="color:var(&#45;&#45;gold)">#${userId}</td>-->
+<!--                        <td>${user.name}</td>-->
+<!--                        <td>${user.email}</td>-->
+<!--                        <td>₹${user.balance}</td>-->
+<!--                        <td>${user.createdAt}</td>-->
+<!--                        <td onclick="event.stopPropagation()">-->
+<!--                            <button onclick="deposit(${userId})">Deposit</button>-->
+<!--                            <button class="btn-outline" onclick="updateUser(${userId},'${user.name}','${user.email}')">Edit</button>-->
+<!--                        </td>-->
+<!--                    </tr>`;-->
+<!--            });-->
+<!--            createPagination(data.page.totalPages);-->
+<!--        });-->
+<!--    }-->
+
+<!--    function viewUser(userId){ window.location.href = "Member1Page2.html?userId=" + userId; }-->
+
+<!--    function createPagination(totalPages){-->
+<!--        const footer=document.getElementById("pagination");-->
+<!--        footer.innerHTML="";-->
+<!--        for(let i=0; i<totalPages; i++){-->
+<!--            footer.innerHTML+=`<button class="page-btn ${i===currentPage?'active':''}" onclick="loadUsers(${i})">${i+1}</button>`;-->
+<!--        }-->
+<!--    }-->
+
+<!--    function searchUsers(){-->
+<!--        const name=document.getElementById("nameSearch").value;-->
+<!--        const email=document.getElementById("emailSearch").value;-->
+<!--        if(name) currentURL=`http://localhost:8080/users/search/findByNameContainingIgnoreCase?name=${name}`;-->
+<!--        else if(email) currentURL=`http://localhost:8080/users/search/findByEmailContainingIgnoreCase?email=${email}`;-->
+<!--        loadUsers(0);-->
+<!--    }-->
+
+<!--    function clearSearch(){-->
+<!--        document.getElementById("nameSearch").value="";-->
+<!--        document.getElementById("emailSearch").value="";-->
+<!--        currentURL=BASE_URL;-->
+<!--        loadUsers(0);-->
+<!--    }-->
+
+<!--    function deposit(userId){-->
+<!--        const amount=prompt("Enter deposit amount (INR):");-->
+<!--        if(!amount) return;-->
+<!--        fetch(`${DEPOSIT_URL}/${userId}?amount=${amount}`,{ method:"PUT" }).then(()=>loadUsers(currentPage));-->
+<!--    }-->
+
+<!--    function updateUser(userId, name, email){-->
+<!--        const newName=prompt("Update Name:", name);-->
+<!--        const newEmail=prompt("Update Email:", email);-->
+<!--        fetch(`${BASE_URL}/${userId}`,{-->
+<!--            method:"PATCH",-->
+<!--            headers:{"Content-Type":"application/json"},-->
+<!--            body:JSON.stringify({name:newName, email:newEmail})-->
+<!--        }).then(()=>loadUsers(currentPage));-->
+<!--    }-->
+
+<!--    function openAddUser(){-->
+<!--        const name=prompt("Account Holder Name:");-->
+<!--        const email=prompt("Account Email:");-->
+<!--        if(!name || !email) return;-->
+<!--        fetch(BASE_URL,{-->
+<!--            method:"POST",-->
+<!--            headers:{"Content-Type":"application/json"},-->
+<!--            body:JSON.stringify({name, email})-->
+<!--        }).then(res=>{-->
+<!--            if(!res.ok) alert("Email exists!");-->
+<!--            else loadUsers();-->
+<!--        });-->
+<!--    }-->
+
+<!--    loadUsers();-->
+<!--</script>-->
+<!--</body>-->
+<!--</html>-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Directory | Digital Gold</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --bg-dark: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --modal-bg: #151515;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 50px;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            text-align: center;
+            font-size: 2.5rem;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+
+        .top-bar { text-align: right; margin-bottom: 20px; width: 90%; margin-left: auto; margin-right: auto; }
+
+        table {
+            width: 95%;
+            margin: 0 auto;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+        }
+
+        th {
+            color: var(--gold);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 20px;
+            background: rgba(212, 175, 55, 0.05);
+            border-bottom: 1px solid var(--gold);
+        }
+
+        td {
+            background: var(--glass);
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        tr:hover td { background: rgba(212, 175, 55, 0.08); cursor: pointer; }
+
+        .search-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        input {
+            background: #111;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        button {
+            background: var(--gold);
+            color: #000;
+            border: none;
+            padding: 8px 15px;
+            font-weight: 600;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        button:hover { opacity: 0.8; box-shadow: 0 0 10px var(--gold); }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            margin-left: 5px;
+        }
+
+        .pagination { text-align: center; margin-top: 30px; }
+        .page-btn {
+            background: transparent;
+            border: 1px solid #444;
+            color: #fff;
+            width: 35px;
+            height: 35px;
+            margin: 0 5px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .page-btn.active { border-color: var(--gold); color: var(--gold); }
+
+        /* --- STYLISH MODAL --- */
+        .modal-overlay {
+            position: fixed;
+            top:0; left:0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none; /* Hidden by default */
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-card {
+            background: var(--modal-bg);
+            border: 1px solid var(--gold);
+            padding: 30px;
+            width: 400px;
+            border-radius: 12px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .modal-card h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .modal-form { display: flex; flex-direction: column; gap: 15px; }
+
+        .modal-form label { font-size: 0.75rem; color: #888; text-transform: uppercase; }
+
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+    </style>
+</head>
+<body>
+
+<h2>Vault Members</h2>
+<div class="subtitle">Digital Finance • Gold Backed</div>
+
+<div class="top-bar">
+    <button onclick="showModal('add')">+ Create New Account</button>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Sr.</th>
+        <th>UID</th>
+        <th>
+            Name
+            <div class="search-container">
+                <input id="nameSearch" placeholder="Filter name...">
+                <div>
+                    <button onclick="searchUsers()">Find</button>
+                    <button class="btn-outline" onclick="clearSearch()">Clear</button>
+                </div>
+            </div>
+        </th>
+        <th>
+            Email
+            <div class="search-container">
+                <input id="emailSearch" placeholder="Filter email...">
+                <div>
+                    <button onclick="searchUsers()">Find</button>
+                    <button class="btn-outline" onclick="clearSearch()">Clear</button>
+                </div>
+            </div>
+        </th>
+        <th>Balance</th>
+        <th>Joined</th>
+        <th>Management</th>
+    </tr>
+    </thead>
+    <tbody id="usersTable"></tbody>
+</table>
+
+<div id="pagination" class="pagination"></div>
+
+<div id="uiModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3 id="modalTitle">Account Action</h3>
+        <div class="modal-form">
+            <div id="field-name">
+                <label>Account Holder Name</label><br>
+                <input type="text" id="inputName" style="width: 100%; box-sizing: border-box;">
+            </div>
+            <div id="field-email">
+                <label>Email Address</label><br>
+                <input type="email" id="inputEmail" style="width: 100%; box-sizing: border-box;">
+            </div>
+            <div id="field-amount" style="display: none;">
+                <label>Deposit Amount (INR)</label><br>
+                <input type="number" id="inputAmount" style="width: 100%; box-sizing: border-box;">
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-outline" onclick="closeModal()">Cancel</button>
+            <button id="modalSubmitBtn">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const BASE_URL="http://localhost:8080/users";
+    const DEPOSIT_URL="http://localhost:8080/user/deposit";
+    let currentPage=0;
+    let currentURL=BASE_URL;
+
+    /* --- MODAL LOGIC --- */
+    const modal = document.getElementById('uiModal');
+    const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+
+    function showModal(mode, data = {}) {
+        // Reset fields
+        document.getElementById('field-name').style.display = 'none';
+        document.getElementById('field-email').style.display = 'none';
+        document.getElementById('field-amount').style.display = 'none';
+
+        if(mode === 'add') {
+            document.getElementById('modalTitle').innerText = 'New Account';
+            document.getElementById('field-name').style.display = 'block';
+            document.getElementById('field-email').style.display = 'block';
+            document.getElementById('inputName').value = '';
+            document.getElementById('inputEmail').value = '';
+            modalSubmitBtn.onclick = executeAddUser;
+        }
+        else if(mode === 'edit') {
+            document.getElementById('modalTitle').innerText = 'Update Member';
+            document.getElementById('field-name').style.display = 'block';
+            document.getElementById('field-email').style.display = 'block';
+            document.getElementById('inputName').value = data.name;
+            document.getElementById('inputEmail').value = data.email;
+            modalSubmitBtn.onclick = () => executeUpdateUser(data.id);
+        }
+        else if(mode === 'deposit') {
+            document.getElementById('modalTitle').innerText = 'Gold Deposit';
+            document.getElementById('field-amount').style.display = 'block';
+            document.getElementById('inputAmount').value = '';
+            modalSubmitBtn.onclick = () => executeDeposit(data.id);
+        }
+
+        modal.style.display = 'flex';
+    }
+
+    function closeModal() { modal.style.display = 'none'; }
+
+    /* --- FUNCTIONALITY --- */
+
+    function loadUsers(page=0){
+        currentPage=page;
+        let url=currentURL.includes("?") ? `${currentURL}&page=${page}&size=20` : `${currentURL}?page=${page}&size=20`;
+        fetch(url).then(res=>res.json()).then(data=>{
+            const users=data._embedded.userses;
+            const table=document.getElementById("usersTable");
+            table.innerHTML="";
+            users.forEach((user,index)=>{
+                const userId=user._links.self.href.split("/").pop();
+                table.innerHTML+=`
+                    <tr onclick="viewUser(${userId})">
+                        <td>${index+1 + page*20}</td>
+                        <td style="color:var(--gold)">#${userId}</td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>₹${user.balance}</td>
+                        <td>${user.createdAt}</td>
+                        <td onclick="event.stopPropagation()">
+                            <button onclick="showModal('deposit', {id: ${userId}})">Deposit</button>
+                            <button class="btn-outline" onclick="showModal('edit', {id: ${userId}, name: '${user.name}', email: '${user.email}'})">Edit</button>
+                        </td>
+                    </tr>`;
+            });
+            createPagination(data.page.totalPages);
+        });
+    }
+
+    function executeDeposit(userId) {
+        const amount = document.getElementById('inputAmount').value;
+        if(!amount) return;
+        fetch(`${DEPOSIT_URL}/${userId}?amount=${amount}`,{ method:"PUT" })
+            .then(() => { closeModal(); loadUsers(currentPage); });
+    }
+
+    function executeUpdateUser(userId) {
+        const name = document.getElementById('inputName').value;
+        const email = document.getElementById('inputEmail').value;
+        fetch(`${BASE_URL}/${userId}`,{
+            method:"PATCH",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({name, email})
+        }).then(() => { closeModal(); loadUsers(currentPage); });
+    }
+
+    function executeAddUser() {
+        const name = document.getElementById('inputName').value;
+        const email = document.getElementById('inputEmail').value;
+        if(!name || !email) return;
+        fetch(BASE_URL,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({name, email})
+        }).then(res=>{
+            if(!res.ok) alert("Email exists!");
+            else { closeModal(); loadUsers(); }
+        });
+    }
+
+    // Search and View functions remain same
+    function viewUser(userId){ window.location.href = "Member1Page2.html?userId=" + userId; }
+    function createPagination(totalPages){
+        const footer=document.getElementById("pagination");
+        footer.innerHTML="";
+        for(let i=0; i<totalPages; i++){
+            footer.innerHTML+=`<button class="page-btn ${i===currentPage?'active':''}" onclick="loadUsers(${i})">${i+1}</button>`;
+        }
+    }
+    function searchUsers(){
+        const name=document.getElementById("nameSearch").value;
+        const email=document.getElementById("emailSearch").value;
+        if(name) currentURL=`http://localhost:8080/users/search/findByNameContainingIgnoreCase?name=${name}`;
+        else if(email) currentURL=`http://localhost:8080/users/search/findByEmailContainingIgnoreCase?email=${email}`;
+        loadUsers(0);
+    }
+    function clearSearch(){
+        document.getElementById("nameSearch").value="";
+        document.getElementById("emailSearch").value="";
+        currentURL=BASE_URL;
+        loadUsers(0);
+    }
+
+    loadUsers();
+</script>
+</body>
+</html>
