@@ -267,7 +267,7 @@
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <title>User Insights | Digital Gold</title>
@@ -443,70 +443,71 @@
 
 <button onclick="goBack()">Return to Ledger</button>
 
-<script>
-    const BASE_URL="http://localhost:8080/users";
-    const PHYSICAL_URL="http://localhost:8080/user/physical";
+<script th:inline="javascript">
+    const BACKEND_URL = /*[[${@environment.getProperty('backend.base-url')}]]*/ "http://localhost:8080";
+        const BASE_URL = BACKEND_URL + "/users";
+        const PHYSICAL_URL = BACKEND_URL + "/user/physical";
 
-    function getUserId(){
-        const params=new URLSearchParams(window.location.search);
-        return params.get("userId");
-    }
+            function getUserId(){
+                const params=new URLSearchParams(window.location.search);
+                return params.get("userId");
+            }
 
-    function loadUser(){
-        const userId=getUserId();
-        fetch(`${BASE_URL}/${userId}`)
-        .then(res=>res.json())
-        .then(user=>{
-            const table=document.getElementById("userDetails");
-            table.innerHTML=`
-                <tr><th>User ID</th><td>#${userId}</td></tr>
-                <tr><th>Name</th><td>${user.name}</td></tr>
-                <tr><th>Email</th><td>${user.email}</td></tr>
-                <tr><th>Wallet Balance</th><td>₹ ${user.balance}</td></tr>
-                <tr><th>Member Since</th><td>${user.createdAt}</td></tr>
-            `;
-        });
-    }
+            function loadUser(){
+                const userId=getUserId();
+                fetch(`${BASE_URL}/${userId}`)
+                .then(res=>res.json())
+                .then(user=>{
+                    const table=document.getElementById("userDetails");
+                    table.innerHTML=`
+                        <tr><th>User ID</th><td>#${userId}</td></tr>
+                        <tr><th>Name</th><td>${user.name}</td></tr>
+                        <tr><th>Email</th><td>${user.email}</td></tr>
+                        <tr><th>Wallet Balance</th><td>₹ ${user.balance}</td></tr>
+                        <tr><th>Member Since</th><td>${user.createdAt}</td></tr>
+                    `;
+                });
+            }
 
-    function loadPhysicalTransactions(){
-        const userId=getUserId();
-        fetch(`${PHYSICAL_URL}/${userId}`)
-        .then(res=>res.json())
-        .then(data=>{
-            const table=document.querySelector("#physicalTransactions tbody");
-            table.innerHTML="";
-            let totalQty=0, totalAmt=0;
+            function loadPhysicalTransactions(){
+                const userId=getUserId();
+                fetch(`${PHYSICAL_URL}/${userId}`)
+                .then(res=>res.json())
+                .then(data=>{
+                    const table=document.querySelector("#physicalTransactions tbody");
+                    table.innerHTML="";
+                    let totalQty=0, totalAmt=0;
 
-            data.forEach(tx=>{
-                totalQty += Number(tx.quantity || 0);
-                totalAmt += Number(tx.amount || 0);
-                table.innerHTML += `
-                    <tr>
-                        <td>${tx.transactionId}</td>
-                        <td style="color:var(--gold)">${tx.quantity}g</td>
-                        <td>₹${tx.amount}</td>
-                        <td>${tx.branch?.vendors?.vendorName || "-"}</td>
-                        <td>${tx.branch?.vendors?.contactPersonName || "-"}</td>
-                        <td>${tx.branch?.vendors?.contactEmail || "-"}</td>
-                        <td>${tx.branch?.vendors?.contactPhone || "-"}</td>
-                        <td>${tx.branch?.address?.city || "-"}</td>
-                        <td>${tx.transactionType}</td>
-                        <td>${tx.transactionStatus}</td>
-                        <td>${tx.createdAt}</td>
-                    </tr>`;
-            });
+                    data.forEach(tx=>{
+                        totalQty += Number(tx.quantity || 0);
+                        totalAmt += Number(tx.amount || 0);
+                        table.innerHTML += `
+                            <tr>
+                                <td>${tx.transactionId}</td>
+                                <td style="color:var(--gold)">${tx.quantity}g</td>
+                                <td>₹${tx.amount}</td>
+                                <td>${tx.branch?.vendors?.vendorName || "-"}</td>
+                                <td>${tx.branch?.vendors?.contactPersonName || "-"}</td>
+                                <td>${tx.branch?.vendors?.contactEmail || "-"}</td>
+                                <td>${tx.branch?.vendors?.contactPhone || "-"}</td>
+                                <td>${tx.branch?.address?.city || "-"}</td>
+                                <td>${tx.transactionType}</td>
+                                <td>${tx.transactionStatus}</td>
+                                <td>${tx.createdAt}</td>
+                            </tr>`;
+                    });
 
-            document.getElementById("statsBox").innerHTML=`
-                <div class="statCard"><span class="statLabel">Vaulted Gold</span><span class="statValue">${totalQty}g</span></div>
-                <div class="statCard"><span class="statLabel">Asset Value</span><span class="statValue">₹${totalAmt}</span></div>
-                <div class="statCard"><span class="statLabel">Total Orders</span><span class="statValue">${data.length}</span></div>
-            `;
-        });
-    }
+                    document.getElementById("statsBox").innerHTML=`
+                        <div class="statCard"><span class="statLabel">Vaulted Gold</span><span class="statValue">${totalQty}g</span></div>
+                        <div class="statCard"><span class="statLabel">Asset Value</span><span class="statValue">₹${totalAmt}</span></div>
+                        <div class="statCard"><span class="statLabel">Total Orders</span><span class="statValue">${data.length}</span></div>
+                    `;
+                });
+            }
 
-    function goBack(){ window.history.back(); }
-    loadUser();
-    loadPhysicalTransactions();
+            function goBack(){ window.history.back(); }
+            loadUser();
+            loadPhysicalTransactions();
 </script>
 </body>
 </html>
