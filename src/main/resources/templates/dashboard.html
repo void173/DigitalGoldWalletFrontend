@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Dashboard</title>
+    <meta charset="UTF-8">
+
+    ```
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+
+        h2 {
+            color: #333;
+            margin-top: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background: white;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+        }
+
+        td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: #2c7a7b;
+        }
+    </style>
+    ```
+
+</head>
+<body>
+
+<h1>User Dashboard</h1>
+
+<!-- ================= USER INFO ================= -->
+
+<div class="card">
+    <h2>User Details</h2>
+
+    ```
+    <p>Name: <span th:text="${user.name}"></span></p>
+    <p>Email: <span th:text="${user.email}"></span></p>
+    <p>Balance: ₹<span th:text="${user.balance}"></span></p>
+    <p>City: <span th:text="${address.city}"></span></p>
+    <p>Total Gold: <span th:text="${totalGold}"></span></p>
+    ```
+
+</div>
+
+<!-- ================= HOLDINGS ================= -->
+
+<div class="card">
+    <h2>Virtual Gold Holdings</h2>
+
+    ```
+    <table>
+        <thead>
+        <tr>
+            <th>Sr No</th>
+            <th>Branch ID</th>
+            <th>Quantity (gm)</th>
+            <th>Created At</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="h, stat : ${holdings}">
+            <td th:text="${stat.count}"></td>
+            <td th:text="${h._links.branch.href}"></td> <!-- branch id not directly available -->
+            <td th:text="${h.quantity}"></td>
+            <td th:text="${h.createdAt}"></td>
+        </tr>
+
+        <tr th:if="${holdings == null or #lists.isEmpty(holdings)}">
+            <td colspan="4">No Holdings Found</td>
+        </tr>
+        </tbody>
+    </table>
+    ```
+
+</div>
+
+<!-- ================= TRANSACTIONS ================= -->
+
+<div class="card">
+    <h2>Transaction History</h2>
+
+    ```
+    <table>
+        <thead>
+        <tr>
+            <th>Sr No</th>
+            <th>Vendor Name</th>
+            <th>Branch Address</th>
+            <th>Quantity</th>
+            <th>Amount (₹)</th>
+            <th>Type</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="t, stat : ${transactions}">
+            <td th:text="${stat.count}"></td>
+            <td th:text="${t.vendorName}"></td>
+            <td th:text="${t.branchCity}"></td>
+            <td th:text="${t.quantity}"></td>
+            <td th:text="${t.amount}"></td>
+            <td th:text="${t.transactionType}"></td>
+            <td th:text="${t.createdAt}"></td>
+        </tr>
+
+        <tr th:if="${transactions == null or #lists.isEmpty(transactions)}">
+            <td colspan="7">No Transactions Found</td>
+        </tr>
+        </tbody>
+    </table>
+    ```
+
+</div>
+
+</body>
+</html>
