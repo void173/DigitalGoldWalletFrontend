@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Vendor Branches — Digital Gold Wallet System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="css/indexStyle.css"/>
+    <link rel="stylesheet" href="css/vendorBranchesAddressesStyle.css"/>
+</head>
+<body>
+
+<div class="bg-mesh"></div>
+
+<div class="page-wrap">
+
+    <!-- BACK LINK -->
+    <a class="back-link" href="index.html">← Back to Home Page</a>
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <h1>Vendor <em>Branches</em></h1>
+        <p class="page-sub" id="pageSubtitle">Manage vendor branch locations</p>
+    </div>
+
+    <!-- SUMMARY CARD -->
+    <div class="summary-card">
+        <div class="summary-item">
+            <div class="summary-label">Vendor Name</div>
+            <div class="summary-value" id="summaryVendorName">—</div>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+            <div class="summary-label">Total Branches</div>
+            <div class="summary-value gold" id="summaryBranchCount">—</div>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+            <div class="summary-label">Total Gold Quantity</div>
+            <div class="summary-value gold" id="summaryTotalQty">— g</div>
+        </div>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filter-card">
+        <div class="filter-title">Filter Branches</div>
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">City</label>
+                <select class="filter-select" id="cityFilter" onchange="applyFilters()">
+                    <option value="">All Cities</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">State</label>
+                <select class="filter-select" id="stateFilter" onchange="applyFilters()">
+                    <option value="">All States</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Country</label>
+                <select class="filter-select" id="countryFilter" onchange="applyFilters()">
+                    <option value="">All Countries</option>
+                </select>
+            </div>
+            <button class="reset-btn" onclick="resetFilters()">Reset</button>
+        </div>
+    </div>
+
+    <!-- TABLE — wrapped in scroll container -->
+    <div class="table-card">
+        <div class="table-scroll">
+            <table class="branch-table">
+                <thead>
+                <tr>
+                    <th>Branch ID</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Country</th>
+                    <th>Address</th>
+                    <th>Gold Qty (g)</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="branchTableBody">
+                <tr>
+                    <td colspan="8" class="table-loading">
+                        <div class="loader"></div>Loading branches…
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="table-footer">
+            <span class="count-badge" id="countBadge">— branches</span>
+        </div>
+    </div>
+
+</div>
+
+<!-- ── UPDATE BRANCH MODAL ── -->
+<div class="modal-overlay" id="updateModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">Update Branch</div>
+            <button class="modal-close" onclick="closeModal('updateModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="updateBranchId"/>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Street</label>
+                    <input class="form-input" type="text" id="updateStreet" placeholder="Street address"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">City</label>
+                    <input class="form-input" type="text" id="updateCity" placeholder="City"/>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">State</label>
+                    <input class="form-input" type="text" id="updateState" placeholder="State"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Postal Code</label>
+                    <input class="form-input" type="text" id="updatePostal" placeholder="Postal code"/>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Country</label>
+                    <input class="form-input" type="text" id="updateCountry" placeholder="Country"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Gold Quantity (g)</label>
+                    <input class="form-input" type="number" id="updateQty" placeholder="0.00" step="0.01" min="0"/>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeModal('updateModal')">Cancel</button>
+            <button class="btn-confirm" onclick="submitUpdate()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- ── TRANSFER GOLD MODAL ── -->
+<div class="modal-overlay" id="transferModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">Transfer Gold</div>
+            <button class="modal-close" onclick="closeModal('transferModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="transferFromId"/>
+            <div class="transfer-info">
+                <div class="transfer-from">
+                    <div class="transfer-info-label">From Branch</div>
+                    <div class="transfer-info-value" id="transferFromName">—</div>
+                    <div class="transfer-avail">Available: <span id="transferAvailable">—</span> g</div>
+                </div>
+                <div class="transfer-arrow">→</div>
+                <div class="transfer-to">
+                    <div class="transfer-info-label">To Branch</div>
+                    <select class="form-input" id="transferToBranch">
+                        <option value="">Select destination branch</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top:20px;">
+                <label class="form-label">Amount to Transfer (g)</label>
+                <input class="form-input" type="number" id="transferAmount"
+                       placeholder="Enter grams to transfer" step="0.01" min="0.01"/>
+            </div>
+            <div class="transfer-note">
+                Gold will be deducted from the source branch and added to the destination branch.
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeModal('transferModal')">Cancel</button>
+            <button class="btn-confirm btn-gold" onclick="submitTransfer()">Transfer Gold</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-dot"></div>
+        <div class="footer-text">Digital Gold Wallet System</div>
+        <div class="footer-dot"></div>
+    </div>
+</footer>
+
+<script src="js/vendorsBranchesAddresses.js"></script>
+
+</body>
+</html>
