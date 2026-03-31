@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Vendor Branches — Digital Gold Wallet System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <style>
+        /* ═══════════════════════════════════════════
+           RESET & ROOT
+        ═══════════════════════════════════════════ */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+          --gold:        #C9973F;
+          --gold-dim:    #a07830;
+          --gold-pale:   #e8c97a;
+          --gold-bright: #f0d98a;
+          --bg:          #13100a;
+          --surface:     #1a1710;
+          --card-bg:     #1d1a11;
+          --card-hover:  #232016;
+          --border:      #2a2418;
+          --border-dim:  #201d12;
+          --text:        #f0e8d6;
+          --text-sub:    #9a8f78;
+          --text-muted:  #655944;
+        }
+
+        body {
+          font-family: 'DM Sans', sans-serif;
+          background: var(--bg);
+          color: var(--text);
+          min-height: 100vh;
+          overflow-x: hidden;
+          font-size: 15px;
+          line-height: 1.5;
+        }
+
+        /* ═══════════════════════════════════════════
+           BACKGROUND
+        ═══════════════════════════════════════════ */
+        .bg-glow {
+          position: fixed;
+          inset: 0; z-index: 0;
+          pointer-events: none;
+          background:
+            radial-gradient(ellipse 55% 35% at 50% 0%,   rgba(201,151,63,0.08) 0%, transparent 60%),
+            radial-gradient(ellipse 30% 25% at 0%   80%,  rgba(201,151,63,0.04) 0%, transparent 55%),
+            radial-gradient(ellipse 30% 25% at 100% 70%,  rgba(201,151,63,0.04) 0%, transparent 55%);
+        }
+
+        /* ═══════════════════════════════════════════
+           PAGE SHELL
+        ═══════════════════════════════════════════ */
+        .page-wrap {
+          position: relative; z-index: 1;
+          max-width: 1160px;
+          margin: 0 auto;
+          padding: 40px 32px 80px;
+        }
+
+        /* ═══════════════════════════════════════════
+           TOP NAV BAR
+        ═══════════════════════════════════════════ */
+        .top-nav {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 40px;
+          padding-bottom: 20px;
+          border-bottom: 1px solid var(--border-dim);
+        }
+        .back-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          font-size: 0.88rem;
+          font-weight: 500;
+          color: var(--text-muted);
+          text-decoration: none;
+          letter-spacing: 0.04em;
+          transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--gold); }
+        .back-link svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+        .nav-brand {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 0.9rem;
+          font-weight: 300;
+          color: var(--text-muted);
+          letter-spacing: 0.14em;
+        }
+
+        /* ═══════════════════════════════════════════
+           PAGE HEADER
+        ═══════════════════════════════════════════ */
+        .page-header {
+          margin-bottom: 36px;
+        }
+        .page-header h1 {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+          font-weight: 300;
+          color: var(--text);
+          letter-spacing: 0.01em;
+          line-height: 1.1;
+          margin-bottom: 8px;
+        }
+        .page-header h1 em { font-style: italic; color: var(--gold-pale); }
+        .page-sub {
+          font-size: 0.95rem;
+          color: var(--text-sub);
+          font-weight: 300;
+        }
+
+        /* ═══════════════════════════════════════════
+           SUMMARY STRIP
+        ═══════════════════════════════════════════ */
+        .summary-strip {
+          display: flex;
+          align-items: stretch;
+          background: var(--card-bg);
+          border: 1px solid var(--border);
+          border-radius: 14px;
+          margin-bottom: 16px;
+          overflow: hidden;
+        }
+        .summary-item {
+          flex: 1;
+          padding: 24px 30px;
+          min-width: 0;
+        }
+        .summary-divider {
+          width: 1px;
+          background: var(--border);
+          flex-shrink: 0;
+          align-self: stretch;
+        }
+        .summary-label {
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.2em;
+          text-transform: uppercase;
+          color: var(--text-muted);
+          margin-bottom: 8px;
+        }
+        .summary-value {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 2rem;
+          font-weight: 400;
+          color: var(--text);
+          line-height: 1;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .summary-value.gold { color: var(--gold-pale); }
+
+        /* ═══════════════════════════════════════════
+           FILTER BAR
+        ═══════════════════════════════════════════ */
+        .filter-bar {
+          background: var(--card-bg);
+          border: 1px solid var(--border);
+          border-radius: 14px;
+          padding: 20px 24px 22px;
+          margin-bottom: 16px;
+        }
+        .filter-bar-label {
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 0.22em;
+          text-transform: uppercase;
+          color: var(--gold-dim);
+          margin-bottom: 14px;
+        }
+        .filter-row {
+          display: flex;
+          align-items: flex-end;
+          gap: 12px;
+          flex-wrap: wrap;
+        }
+        .filter-group {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          flex: 1;
+          min-width: 130px;
+        }
+        .filter-label {
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: var(--text-muted);
+        }
+        .filter-select {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          padding: 10px 32px 10px 12px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.9rem;
+          color: var(--text);
+          outline: none;
+          cursor: pointer;
+          appearance: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23a07830'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 11px center;
+          transition: border-color 0.2s;
+        }
+        .filter-select:focus { border-color: var(--gold-dim); }
+        .filter-select option { background: #1d1a11; color: var(--text); }
+
+        .reset-btn {
+          background: transparent;
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          padding: 10px 22px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.87rem;
+          font-weight: 500;
+          letter-spacing: 0.05em;
+          color: var(--text-muted);
+          cursor: pointer;
+          white-space: nowrap;
+          align-self: flex-end;
+          transition: border-color 0.2s, color 0.2s;
+        }
+        .reset-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+
+        /* ═══════════════════════════════════════════
+           TABLE CARD
+        ═══════════════════════════════════════════ */
+        .table-card {
+          background: var(--card-bg);
+          border: 1px solid var(--border);
+          border-radius: 14px;
+          overflow: hidden;
+        }
+
+        .table-scroll {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        /* scrollbar styling */
+        .table-scroll::-webkit-scrollbar { height: 4px; }
+        .table-scroll::-webkit-scrollbar-track { background: var(--surface); }
+        .table-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .table-scroll::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+        .branch-table {
+          width: 100%;
+          border-collapse: collapse;
+          min-width: 860px;
+        }
+
+        /* HEAD */
+        .branch-table thead {
+          background: var(--surface);
+          border-bottom: 1px solid var(--border);
+        }
+        .branch-table th {
+          padding: 13px 16px;
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          color: var(--text-muted);
+          text-align: left;
+          white-space: nowrap;
+        }
+        .branch-table th:first-child { padding-left: 22px; }
+        .branch-table th:last-child  { padding-right: 22px; text-align: center; }
+
+        /* BODY */
+        .branch-table tbody tr {
+          border-bottom: 1px solid var(--border-dim);
+          transition: background 0.15s;
+        }
+        .branch-table tbody tr:last-child { border-bottom: none; }
+        .branch-table tbody tr:hover { background: var(--card-hover); }
+
+        .branch-table td {
+          padding: 14px 16px;
+          vertical-align: middle;
+          font-size: 0.9rem;
+          color: var(--text-sub);
+        }
+        .branch-table td:first-child { padding-left: 22px; }
+        .branch-table td:last-child  { padding-right: 22px; }
+
+        /* cell variants */
+        .td-id {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 1.1rem;
+          font-weight: 500;
+          color: var(--gold-dim) !important;
+        }
+        .td-city {
+          font-size: 0.94rem;
+          font-weight: 600;
+          color: var(--text) !important;
+        }
+        .td-state, .td-country {
+          font-size: 0.9rem;
+          color: var(--text-sub) !important;
+        }
+        .td-address {
+          font-size: 0.86rem;
+          color: var(--text-muted) !important;
+          max-width: 200px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .td-qty {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 1.15rem;
+          color: var(--gold-pale) !important;
+          white-space: nowrap;
+        }
+        .td-date {
+          font-size: 0.84rem;
+          color: var(--text-muted) !important;
+          white-space: nowrap;
+        }
+        .td-actions {
+          text-align: center;
+          white-space: nowrap;
+        }
+
+        /* action buttons */
+        .actions-wrap {
+          display: inline-flex;
+          gap: 6px;
+          align-items: center;
+        }
+        .action-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 7px 13px;
+          border-radius: 7px;
+          border: 1px solid;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 12px;
+          font-weight: 500;
+          cursor: pointer;
+          transition: background 0.2s, border-color 0.2s, color 0.2s;
+          letter-spacing: 0.02em;
+          white-space: nowrap;
+        }
+        .btn-edit {
+          background: var(--surface);
+          border-color: var(--border);
+          color: var(--text-sub);
+        }
+        .btn-edit:hover {
+          background: #252016;
+          border-color: var(--gold-dim);
+          color: var(--gold);
+        }
+        .btn-transfer {
+          background: rgba(201,151,63,0.06);
+          border-color: #3a3018;
+          color: var(--gold-dim);
+        }
+        .btn-transfer:hover {
+          background: rgba(201,151,63,0.15);
+          border-color: var(--gold);
+          color: var(--gold-pale);
+        }
+
+        /* table footer */
+        .table-footer {
+          padding: 12px 22px;
+          border-top: 1px solid var(--border-dim);
+          background: var(--surface);
+          display: flex;
+          justify-content: flex-end;
+        }
+        .count-badge {
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: var(--gold-dim);
+        }
+
+        /* empty / loading states */
+        .state-cell {
+          text-align: center !important;
+          padding: 56px 24px !important;
+          color: var(--text-muted) !important;
+          font-size: 0.92rem !important;
+        }
+        .loader {
+          display: inline-block;
+          width: 20px; height: 20px;
+          border: 2px solid var(--border);
+          border-top-color: var(--gold);
+          border-radius: 50%;
+          animation: spin 0.75s linear infinite;
+          vertical-align: middle;
+          margin-right: 10px;
+        }
+
+        /* ═══════════════════════════════════════════
+           MODALS
+        ═══════════════════════════════════════════ */
+        .modal-overlay {
+          display: none;
+          position: fixed;
+          inset: 0; z-index: 200;
+          background: rgba(5, 4, 2, 0.82);
+          align-items: center;
+          justify-content: center;
+          backdrop-filter: blur(6px);
+          padding: 20px;
+        }
+        .modal-overlay.open { display: flex; }
+
+        .modal {
+          background: #18150d;
+          border: 1px solid #302818;
+          border-radius: 16px;
+          width: 100%;
+          max-width: 540px;
+          overflow: hidden;
+          animation: modalIn 0.2s ease;
+          box-shadow: 0 24px 80px rgba(0,0,0,0.7);
+        }
+
+        .modal-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 22px 26px 18px;
+          border-bottom: 1px solid var(--border);
+        }
+        .modal-title {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 1.55rem;
+          font-weight: 400;
+          color: var(--text);
+        }
+        .modal-close {
+          background: none; border: none;
+          color: var(--text-muted);
+          font-size: 18px;
+          cursor: pointer;
+          padding: 4px 8px;
+          border-radius: 6px;
+          line-height: 1;
+          transition: color 0.2s, background 0.2s;
+        }
+        .modal-close:hover { color: var(--text); background: var(--surface); }
+
+        .modal-body { padding: 24px 26px; }
+
+        .form-row {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 14px;
+          margin-bottom: 14px;
+        }
+        .form-row:last-of-type { margin-bottom: 0; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-label {
+          font-size: 11px; font-weight: 600;
+          letter-spacing: 0.16em; text-transform: uppercase;
+          color: var(--text-muted);
+        }
+        .form-input {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          padding: 10px 13px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.9rem;
+          color: var(--text);
+          outline: none;
+          width: 100%;
+          transition: border-color 0.2s;
+        }
+        .form-input::placeholder { color: #38321e; }
+        .form-input:focus { border-color: var(--gold-dim); }
+        .form-input option { background: #18150d; color: var(--text); }
+
+        .modal-footer {
+          display: flex;
+          justify-content: flex-end;
+          gap: 10px;
+          padding: 16px 26px;
+          border-top: 1px solid var(--border);
+          background: var(--surface);
+        }
+        .btn-cancel {
+          background: transparent;
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          padding: 10px 22px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.87rem;
+          font-weight: 500;
+          color: var(--text-muted);
+          cursor: pointer;
+          transition: border-color 0.2s, color 0.2s;
+        }
+        .btn-cancel:hover { border-color: var(--text-muted); color: var(--text); }
+
+        .btn-confirm {
+          background: rgba(201,151,63,0.1);
+          border: 1px solid var(--gold-dim);
+          border-radius: 8px;
+          padding: 10px 24px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.87rem;
+          font-weight: 600;
+          color: var(--gold);
+          cursor: pointer;
+          transition: background 0.2s, border-color 0.2s;
+          letter-spacing: 0.03em;
+        }
+        .btn-confirm:hover { background: rgba(201,151,63,0.2); border-color: var(--gold); }
+
+        .btn-confirm.btn-gold {
+          background: rgba(201,151,63,0.14);
+          border-color: var(--gold);
+          color: var(--gold-pale);
+        }
+        .btn-confirm.btn-gold:hover { background: rgba(201,151,63,0.25); }
+
+        /* transfer modal layout */
+        .transfer-info {
+          display: flex;
+          align-items: stretch;
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 10px;
+          overflow: hidden;
+          margin-bottom: 16px;
+        }
+        .transfer-from, .transfer-to { flex: 1; padding: 16px 18px; min-width: 0; }
+        .transfer-arrow {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0 14px;
+          font-size: 1.2rem;
+          color: var(--gold-dim);
+          border-left: 1px solid var(--border);
+          border-right: 1px solid var(--border);
+          background: #151209;
+          flex-shrink: 0;
+        }
+        .t-label {
+          font-size: 10px; font-weight: 600;
+          letter-spacing: 0.18em; text-transform: uppercase;
+          color: var(--text-muted); margin-bottom: 6px;
+        }
+        .t-value {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 1.15rem;
+          color: var(--text); font-weight: 400;
+          margin-bottom: 4px; line-height: 1.3;
+        }
+        .t-avail { font-size: 0.8rem; color: var(--gold-dim); font-weight: 600; }
+
+        .transfer-note {
+          font-size: 0.82rem;
+          color: var(--text-muted);
+          margin-top: 14px;
+          line-height: 1.65;
+          padding: 11px 14px;
+          border: 1px solid var(--border-dim);
+          border-radius: 8px;
+          background: var(--surface);
+        }
+
+        /* ═══════════════════════════════════════════
+           TOAST
+        ═══════════════════════════════════════════ */
+        .toast {
+          position: fixed;
+          bottom: 24px; right: 24px;
+          z-index: 300;
+          background: #1e1a10;
+          border: 1px solid var(--gold-dim);
+          border-radius: 10px;
+          padding: 13px 20px;
+          font-size: 0.88rem;
+          font-weight: 500;
+          color: var(--gold-pale);
+          opacity: 0; pointer-events: none;
+          transition: opacity 0.3s, transform 0.3s;
+          transform: translateY(10px);
+          max-width: 340px;
+          line-height: 1.5;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.error { border-color: #7a2e20; color: #e8806a; background: #180a08; }
+
+        /* ═══════════════════════════════════════════
+           FOOTER
+        ═══════════════════════════════════════════ */
+        footer {
+          position: relative; z-index: 1;
+          text-align: center;
+          padding: 28px 24px;
+          border-top: 1px solid var(--border-dim);
+          margin-top: 40px;
+        }
+        .footer-inner { display: inline-flex; align-items: center; gap: 14px; }
+        .footer-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--gold); opacity: 0.35; }
+        .footer-text {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 0.88rem;
+          color: var(--text-muted);
+          letter-spacing: 0.13em;
+          font-weight: 300;
+        }
+
+        /* ═══════════════════════════════════════════
+           ANIMATIONS
+        ═══════════════════════════════════════════ */
+        @keyframes spin    { to { transform: rotate(360deg); } }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.97) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes rowIn   { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .branch-table tbody tr { animation: rowIn 0.25s ease both; }
+
+        /* ═══════════════════════════════════════════
+           RESPONSIVE
+        ═══════════════════════════════════════════ */
+        @media (max-width: 768px) {
+          .page-wrap { padding: 24px 16px 60px; }
+
+          .summary-strip {
+            flex-direction: column;
+          }
+          .summary-divider { width: 100%; height: 1px; }
+          .summary-item { padding: 18px 22px; }
+          .summary-value { font-size: 1.7rem; }
+
+          .top-nav { margin-bottom: 28px; }
+          .nav-brand { display: none; }
+        }
+
+        @media (max-width: 560px) {
+          .form-row { grid-template-columns: 1fr; }
+          .transfer-info { flex-direction: column; }
+          .transfer-arrow { border: none; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 10px; }
+          .filter-group { min-width: 100%; }
+          .reset-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="page-wrap">
+
+    <!-- TOP NAV -->
+    <div class="top-nav">
+        <a class="back-link" href="../index.html">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Back to Home
+        </a>
+        <div class="nav-brand">Digital Gold Wallet System</div>
+    </div>
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <h1>Vendor <em>Branches</em></h1>
+        <p class="page-sub" id="pageSubtitle">Manage vendor branch locations and gold inventory</p>
+    </div>
+
+    <!-- SUMMARY STRIP -->
+    <div class="summary-strip">
+        <div class="summary-item">
+            <div class="summary-label">Vendor</div>
+            <div class="summary-value" id="summaryVendorName">All Vendors</div>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+            <div class="summary-label">Total Branches</div>
+            <div class="summary-value gold" id="summaryBranchCount">—</div>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+            <div class="summary-label">Total Gold Quantity</div>
+            <div class="summary-value gold" id="summaryTotalQty">— g</div>
+        </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+        <div class="filter-bar-label">Filter Branches</div>
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">City</label>
+                <select class="filter-select" id="cityFilter" onchange="applyFilters()">
+                    <option value="">All Cities</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">State</label>
+                <select class="filter-select" id="stateFilter" onchange="applyFilters()">
+                    <option value="">All States</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Country</label>
+                <select class="filter-select" id="countryFilter" onchange="applyFilters()">
+                    <option value="">All Countries</option>
+                </select>
+            </div>
+            <button class="reset-btn" onclick="resetFilters()">Reset Filters</button>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+        <div class="table-scroll">
+            <table class="branch-table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Country</th>
+                    <th>Address</th>
+                    <th>Gold Qty (g)</th>
+                    <th>Created At</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="branchTableBody">
+                <tr>
+                    <td colspan="8" class="state-cell">
+                        <span class="loader"></span>Loading branches…
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="table-footer">
+            <span class="count-badge" id="countBadge">— branches</span>
+        </div>
+    </div>
+
+</div><!-- /page-wrap -->
+
+<!-- ══ UPDATE MODAL ══ -->
+<div class="modal-overlay" id="updateModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">Update Branch</div>
+            <button class="modal-close" onclick="closeModal('updateModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="updateBranchId"/>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Street</label>
+                    <input class="form-input" type="text" id="updateStreet" placeholder="Street address"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">City</label>
+                    <input class="form-input" type="text" id="updateCity" placeholder="City"/>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">State</label>
+                    <input class="form-input" type="text" id="updateState" placeholder="State"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Postal Code</label>
+                    <input class="form-input" type="text" id="updatePostal" placeholder="Postal code"/>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">Country</label>
+                    <input class="form-input" type="text" id="updateCountry" placeholder="Country"/>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Gold Quantity (g)</label>
+                    <input class="form-input" type="number" id="updateQty" placeholder="0.00" step="0.01" min="0"/>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeModal('updateModal')">Cancel</button>
+            <button class="btn-confirm" onclick="submitUpdate()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<!-- ══ TRANSFER MODAL ══ -->
+<div class="modal-overlay" id="transferModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">Transfer Gold</div>
+            <button class="modal-close" onclick="closeModal('transferModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="transferFromId"/>
+            <div class="transfer-info">
+                <div class="transfer-from">
+                    <div class="t-label">From Branch</div>
+                    <div class="t-value" id="transferFromName">—</div>
+                    <div class="t-avail">Available: <span id="transferAvailable">—</span> g</div>
+                </div>
+                <div class="transfer-arrow">→</div>
+                <div class="transfer-to">
+                    <div class="t-label">To Branch</div>
+                    <select class="form-input" id="transferToBranch">
+                        <option value="">Select destination branch</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Amount to Transfer (g)</label>
+                <input class="form-input" type="number" id="transferAmount"
+                       placeholder="Enter grams to transfer" step="0.01" min="0.01"/>
+            </div>
+            <div class="transfer-note">
+                Gold will be deducted from the source branch and credited to the destination branch immediately.
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeModal('transferModal')">Cancel</button>
+            <button class="btn-confirm btn-gold" onclick="submitTransfer()">Transfer Gold</button>
+        </div>
+    </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-dot"></div>
+        <div class="footer-text">Digital Gold Wallet System</div>
+        <div class="footer-dot"></div>
+    </div>
+</footer>
+
+<script>
+    /* ═══════════════════════════════════════════
+       CONFIG & STATE
+    ═══════════════════════════════════════════ */
+    const API_BASE = 'http://localhost:8080';
+    let allRows      = [];
+    let filteredRows = [];
+    let activeUpdateIndex = null;
+    let activeTransferIndex = null;
+
+    /* ═══════════════════════════════════════════
+       HELPERS
+    ═══════════════════════════════════════════ */
+    const fmtQty  = q  => parseFloat(q || 0).toFixed(2);
+    const fmtDate = dt => dt ? new Date(dt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—';
+
+    /* ═══════════════════════════════════════════
+       TOAST
+    ═══════════════════════════════════════════ */
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast show' + (isError ? ' error' : '');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => { t.className = 'toast'; }, 3200);
+    }
+
+    /* ═══════════════════════════════════════════
+       FETCH
+    ═══════════════════════════════════════════ */
+    async function fetchBranches() {
+      const res = await fetch(`${API_BASE}/vendorBranches?projection=vendorBranchView`);
+      if (!res.ok) throw new Error('API failed');
+      const data = await res.json();
+      return data._embedded?.vendorBranches || [];
+    }
+
+    /* ═══════════════════════════════════════════
+       RENDER
+    ═══════════════════════════════════════════ */
+    function renderTable(rows) {
+      const tbody = document.getElementById('branchTableBody');
+
+      if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="8" class="state-cell">No branches found matching your filters.</td></tr>`;
+        updateCount(0);
+        return;
+      }
+
+      tbody.innerHTML = rows.map((r, i) => `
+        <tr style="animation-delay:${i * 0.04}s">
+          <td class="td-id">${String(i + 1).padStart(2, '0')}</td>
+          <td class="td-city">${r.address?.city  || '—'}</td>
+          <td class="td-state">${r.address?.state || '—'}</td>
+          <td class="td-country">${r.address?.country || '—'}</td>
+          <td class="td-address" title="${r.address?.street || ''}">${r.address?.street || '—'}</td>
+          <td class="td-qty">${fmtQty(r.quantity)} g</td>
+          <td class="td-date">${fmtDate(r.createdAt)}</td>
+          <td class="td-actions">
+            <div class="actions-wrap">
+              <button class="action-btn btn-edit" onclick="openUpdate(${i})">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M8.5 1.5l2 2-7 7H1.5v-2l7-7z" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Edit
+              </button>
+              <button class="action-btn btn-transfer" onclick="openTransfer(${i})">
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M7 3l3 3-3 3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Transfer
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+
+      updateCount(rows.length);
+    }
+
+    /* ═══════════════════════════════════════════
+       SUMMARY & COUNT
+    ═══════════════════════════════════════════ */
+    function updateSummary(rows) {
+      const total = rows.reduce((s, r) => s + (parseFloat(r.quantity) || 0), 0);
+      document.getElementById('summaryBranchCount').textContent = rows.length;
+      document.getElementById('summaryTotalQty').textContent    = `${fmtQty(total)} g`;
+    }
+
+    function updateCount(n) {
+      document.getElementById('countBadge').textContent = `${n} ${n === 1 ? 'branch' : 'branches'}`;
+    }
+
+    /* ═══════════════════════════════════════════
+       FILTERS
+    ═══════════════════════════════════════════ */
+    function populateFilters() {
+      const cities = new Set(), states = new Set(), countries = new Set();
+      allRows.forEach(r => {
+        if (r.address?.city)    cities.add(r.address.city);
+        if (r.address?.state)   states.add(r.address.state);
+        if (r.address?.country) countries.add(r.address.country);
+      });
+      fillSelect('cityFilter',    [...cities].sort());
+      fillSelect('stateFilter',   [...states].sort());
+      fillSelect('countryFilter', [...countries].sort());
+    }
+
+    function fillSelect(id, values) {
+      const sel = document.getElementById(id);
+      values.forEach(v => {
+        const o = document.createElement('option');
+        o.value = o.textContent = v;
+        sel.appendChild(o);
+      });
+    }
+
+    function applyFilters() {
+      const city    = document.getElementById('cityFilter').value;
+      const state   = document.getElementById('stateFilter').value;
+      const country = document.getElementById('countryFilter').value;
+
+      filteredRows = allRows.filter(r =>
+        (!city    || r.address?.city    === city)    &&
+        (!state   || r.address?.state   === state)   &&
+        (!country || r.address?.country === country)
+      );
+      renderTable(filteredRows);
+      updateSummary(filteredRows);
+    }
+
+    function resetFilters() {
+      ['cityFilter','stateFilter','countryFilter'].forEach(id => document.getElementById(id).value = '');
+      filteredRows = [...allRows];
+      renderTable(filteredRows);
+      updateSummary(filteredRows);
+    }
+
+    /* ═══════════════════════════════════════════
+       MODALS
+    ═══════════════════════════════════════════ */
+    function openModal(id)  { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    // close on backdrop click
+    document.addEventListener('click', e => {
+      if (e.target.classList.contains('modal-overlay')) {
+        e.target.classList.remove('open');
+      }
+    });
+    // close on Escape
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+    });
+
+    function openUpdate(index) {
+      activeUpdateIndex = index;
+      const r = filteredRows[index];
+      document.getElementById('updateBranchId').value = r.id || '';
+      document.getElementById('updateStreet').value   = r.address?.street     || '';
+      document.getElementById('updateCity').value     = r.address?.city       || '';
+      document.getElementById('updateState').value    = r.address?.state      || '';
+      document.getElementById('updatePostal').value   = r.address?.postalCode || '';
+      document.getElementById('updateCountry').value  = r.address?.country    || '';
+      document.getElementById('updateQty').value      = r.quantity             || 0;
+      openModal('updateModal');
+    }
+
+    function openTransfer(index) {
+      activeTransferIndex = index;
+      const r = filteredRows[index];
+      document.getElementById('transferFromName').textContent    = r.address?.city || '—';
+      document.getElementById('transferAvailable').textContent   = fmtQty(r.quantity);
+      document.getElementById('transferAmount').value            = '';
+
+      const sel = document.getElementById('transferToBranch');
+      sel.innerHTML = '<option value="">Select destination branch</option>';
+      allRows.forEach((row, i) => {
+        if (row !== r) {
+          const o = document.createElement('option');
+          o.value = i;
+          o.textContent = `${row.address?.city || 'Branch ' + (i+1)} — ${fmtQty(row.quantity)} g`;
+          sel.appendChild(o);
+        }
+      });
+      openModal('transferModal');
+    }
+
+    /* ═══════════════════════════════════════════
+       SUBMIT HANDLERS (stub — wire to real API)
+    ═══════════════════════════════════════════ */
+    async function submitUpdate() {
+      const id     = document.getElementById('updateBranchId').value;
+      const payload = {
+        address: {
+          street:     document.getElementById('updateStreet').value,
+          city:       document.getElementById('updateCity').value,
+          state:      document.getElementById('updateState').value,
+          postalCode: document.getElementById('updatePostal').value,
+          country:    document.getElementById('updateCountry').value,
+        },
+        quantity: parseFloat(document.getElementById('updateQty').value) || 0,
+      };
+
+      try {
+        // const res = await fetch(`${API_BASE}/vendorBranches/${id}`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+        // if (!res.ok) throw new Error();
+        showToast('Branch updated successfully.');
+        closeModal('updateModal');
+        // await init(); // refresh
+      } catch {
+        showToast('Failed to update branch.', true);
+      }
+    }
+
+    async function submitTransfer() {
+      const amount = parseFloat(document.getElementById('transferAmount').value);
+      const toIdx  = document.getElementById('transferToBranch').value;
+
+      if (!toIdx || !amount || amount <= 0) {
+        showToast('Please select a destination and enter a valid amount.', true);
+        return;
+      }
+
+      const from = filteredRows[activeTransferIndex];
+      if (amount > parseFloat(from.quantity || 0)) {
+        showToast('Transfer amount exceeds available gold.', true);
+        return;
+      }
+
+      try {
+        // wire to real API here
+        showToast(`Transferred ${fmtQty(amount)} g successfully.`);
+        closeModal('transferModal');
+      } catch {
+        showToast('Transfer failed. Please try again.', true);
+      }
+    }
+
+    /* ═══════════════════════════════════════════
+       INIT
+    ═══════════════════════════════════════════ */
+    async function init() {
+      document.getElementById('branchTableBody').innerHTML =
+        `<tr><td colspan="8" class="state-cell"><span class="loader"></span>Loading branches…</td></tr>`;
+      try {
+        allRows      = await fetchBranches();
+        filteredRows = [...allRows];
+        populateFilters();
+        renderTable(filteredRows);
+        updateSummary(filteredRows);
+      } catch (err) {
+        console.error(err);
+        document.getElementById('branchTableBody').innerHTML =
+          `<tr><td colspan="8" class="state-cell">Failed to load data. Make sure the backend is running on port 8080.</td></tr>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

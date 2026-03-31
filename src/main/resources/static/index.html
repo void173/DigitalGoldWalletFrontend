@@ -1,28 +1,257 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Digital Gold Wallet System</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="css/indexStyle.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+          rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+          --gold: #C9973F;
+          --gold-dim: #a07830;
+          --gold-pale: #e8c97a;
+          --bg: #13100a;
+          --surface: #1c1810;
+          --card-bg: #1f1b12;
+          --card-hover: #252016;
+          --border: #2e2820;
+          --text: #f0e8d6;
+          --text-sub: #a09070;
+          --text-muted: #6a5f48;
+        }
+
+        body {
+          font-family: 'DM Sans', sans-serif;
+          background: var(--bg);
+          color: var(--text);
+          min-height: 100vh;
+          overflow-x: hidden;
+        }
+
+        .bg-glow {
+          position: fixed;
+          inset: 0;
+          z-index: 0;
+          pointer-events: none;
+          background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(201,151,63,0.07) 0%, transparent 60%);
+        }
+
+        /* ── HEADER ── */
+        .header {
+          position: relative;
+          z-index: 1;
+          text-align: center;
+          padding: 72px 24px 64px;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .coin-icon {
+          width: 56px; height: 56px;
+          margin: 0 auto 28px;
+          animation: spinY 10s linear infinite;
+          transform-style: preserve-3d;
+        }
+        .coin-icon svg { width: 100%; height: 100%; }
+
+        .header-sub {
+          font-size: 11px;
+          letter-spacing: 0.32em;
+          text-transform: uppercase;
+          color: var(--gold);
+          margin-bottom: 18px;
+          font-weight: 500;
+        }
+
+        .header h1 {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: clamp(2.6rem, 6vw, 4.4rem);
+          font-weight: 300;
+          line-height: 1.1;
+          color: var(--text);
+          letter-spacing: 0.02em;
+          margin-bottom: 20px;
+        }
+        .header h1 em { font-style: italic; color: var(--gold-pale); }
+
+        .header-desc {
+          font-size: 1rem;
+          color: var(--text-sub);
+          line-height: 1.8;
+          max-width: 500px;
+          margin: 0 auto;
+          font-weight: 300;
+        }
+
+        .ornament {
+          display: flex; align-items: center; justify-content: center;
+          gap: 14px; margin: 40px auto 0;
+        }
+        .ornament-line {
+          width: 80px; height: 1px;
+          background: linear-gradient(90deg, transparent, var(--gold));
+          opacity: 0.4;
+        }
+        .ornament-line.right { background: linear-gradient(90deg, var(--gold), transparent); }
+        .ornament-diamond {
+          width: 5px; height: 5px;
+          background: var(--gold); transform: rotate(45deg); opacity: 0.6;
+        }
+
+        /* ── SECTION ── */
+        .section {
+          position: relative; z-index: 1;
+          max-width: 960px;
+          margin: 0 auto;
+          padding: 56px 24px 80px;
+        }
+
+        .section-label {
+          text-align: center; margin-bottom: 40px;
+        }
+        .section-label span {
+          font-size: 11px; font-weight: 500;
+          letter-spacing: 0.3em; text-transform: uppercase;
+          color: var(--text-muted);
+        }
+
+        /* ── GRID — CSS grid with explicit center for 5th card ── */
+        .team-grid {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;   /* centers all rows */
+          gap: 20px;
+        }
+
+        /* row 2: cards 4 & 5 centered in a 3-col grid */
+        .team-grid .card:nth-child(4) { grid-column: 1; }
+        .team-grid .card:nth-child(5) { grid-column: 2; }
+
+        @media (max-width: 700px) {
+          .team-grid { grid-template-columns: repeat(2, 1fr); }
+          .team-grid .card:nth-child(4),
+          .team-grid .card:nth-child(5) { grid-column: auto; }
+          /* lone last card spans full width and centers itself */
+          .team-grid .card:last-child:nth-child(odd) {
+            grid-column: 1 / -1;
+            max-width: 300px; width: 100%; margin: 0 auto;
+          }
+        }
+        @media (max-width: 440px) {
+          .team-grid { grid-template-columns: 1fr; }
+          .team-grid .card:last-child:nth-child(odd) {
+            grid-column: auto; max-width: none; margin: 0;
+          }
+        }
+
+        /* ── CARD ── */
+        .card {
+          flex: 1 1 280px;
+          max-width: 300px;
+          background: var(--card-bg);
+          border: 1px solid var(--border);
+          border-radius: 14px;
+          padding: 32px 28px 28px;
+          text-decoration: none; color: inherit;
+          display: block; position: relative; overflow: hidden;
+          transition: background 0.3s, border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover {
+          background: var(--card-hover);
+          border-color: #3e3420;
+          transform: translateY(-3px);
+          box-shadow: 0 12px 40px rgba(0,0,0,0.45), 0 0 0 1px rgba(201,151,63,0.1);
+        }
+
+        .card-bar {
+          position: absolute; top: 0; left: 0; right: 0; height: 2px;
+          background: linear-gradient(90deg, transparent, var(--gold-pale), var(--gold), var(--gold-pale), transparent);
+          transform: scaleX(0); transform-origin: center;
+          transition: transform 0.4s ease;
+        }
+        .card:hover .card-bar { transform: scaleX(1); }
+
+        .avatar-wrap { position: relative; width: 64px; height: 64px; margin-bottom: 20px; }
+        .avatar-ring {
+          position: absolute; inset: -3px; border-radius: 50%;
+          border: 1px solid transparent;
+          background: linear-gradient(135deg, var(--gold), transparent 50%, var(--gold)) border-box;
+          -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+          -webkit-mask-composite: destination-out; mask-composite: exclude;
+          opacity: 0; transition: opacity 0.4s;
+        }
+        .card:hover .avatar-ring { opacity: 1; }
+
+        .avatar {
+          width: 64px; height: 64px; border-radius: 50%;
+          background: var(--surface); border: 1px solid var(--border);
+          display: flex; align-items: center; justify-content: center;
+          font-family: 'Cormorant Garamond', serif; font-size: 1.25rem;
+          color: var(--gold); position: relative; z-index: 1;
+          transition: border-color 0.3s, box-shadow 0.3s;
+        }
+        .card:hover .avatar { border-color: var(--gold-dim); box-shadow: 0 0 16px rgba(201,151,63,0.15); }
+
+        .card-name {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 1.5rem; font-weight: 400;
+          color: var(--text); line-height: 1.2; margin-bottom: 6px;
+        }
+
+        .card-cta {
+          display: inline-flex; align-items: center; gap: 5px;
+          margin-top: 18px; font-size: 11px; letter-spacing: 0.16em;
+          text-transform: uppercase; color: var(--gold); font-weight: 500;
+          opacity: 0; transform: translateX(-6px);
+          transition: opacity 0.3s, transform 0.3s;
+        }
+        .card-cta::after { content: '→'; }
+        .card:hover .card-cta { opacity: 1; transform: translateX(0); }
+
+        /* ── FOOTER ── */
+        footer {
+          position: relative; z-index: 1;
+          text-align: center; padding: 28px 24px;
+          border-top: 1px solid var(--border);
+        }
+        .footer-inner { display: inline-flex; align-items: center; gap: 14px; }
+        .footer-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--gold); opacity: 0.4; }
+        .footer-text {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 0.9rem; color: var(--text-muted); letter-spacing: 0.12em;
+        }
+
+        /* ── ANIMATIONS ── */
+        .fade-in { opacity: 0; transform: translateY(14px); animation: fadeIn 0.7s ease forwards; }
+        .fade-in:nth-child(1) { animation-delay: 0.05s; }
+        .fade-in:nth-child(2) { animation-delay: 0.12s; }
+        .fade-in:nth-child(3) { animation-delay: 0.19s; }
+        .fade-in:nth-child(4) { animation-delay: 0.26s; }
+        .fade-in:nth-child(5) { animation-delay: 0.33s; }
+
+        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+        @keyframes spinY { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+    </style>
 </head>
 <body>
 
-<div class="bg-mesh"></div>
+<div class="bg-glow"></div>
 
-<!-- HEADER -->
 <div class="header">
     <div class="coin-icon">
         <svg viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="26" cy="26" r="24" stroke="#C9973F" stroke-width="1" opacity="0.4"/>
-            <circle cx="26" cy="26" r="19" stroke="#C9973F" stroke-width="0.5" opacity="0.25"/>
-            <text x="26" y="32" text-anchor="middle" font-family="serif" font-size="16" fill="#C9973F" opacity="0.8">₹</text>
+            <circle cx="26" cy="26" r="24" stroke="#C9973F" stroke-width="1.5" opacity="0.5"/>
+            <circle cx="26" cy="26" r="18" stroke="#C9973F" stroke-width="0.75" opacity="0.3"/>
+            <text x="26" y="32" text-anchor="middle" font-family="serif" font-size="16" fill="#C9973F" opacity="0.9">₹
+            </text>
         </svg>
     </div>
     <div class="header-sub">Digital Finance · Gold Backed</div>
     <h1>Digital <em>Gold</em><br>Wallet System</h1>
-    <p class="header-desc">A Spring Boot application for managing gold-backed digital transactions, wallet balances, and secure user accounts — built with Java, JPA &amp; MySQL.</p>
+    <p class="header-desc">A Spring Boot application for managing gold-backed digital transactions, wallet balances, and
+        secure user accounts — built with Java, JPA &amp; MySQL.</p>
     <div class="ornament">
         <div class="ornament-line"></div>
         <div class="ornament-diamond"></div>
@@ -30,90 +259,63 @@
     </div>
 </div>
 
-<!-- TEAM -->
 <div class="section">
-    <div class="section-header">
-        <h2>The Team</h2>
-    </div>
-
+    <div class="section-label"><span>The Team</span></div>
     <div class="team-grid">
 
-        <a class="card fade-in" href="member1.html">
+        <a class="card fade-in" href="templates/Member1Page1.html">
             <div class="card-bar"></div>
             <div class="avatar-wrap">
                 <div class="avatar-ring"></div>
                 <div class="avatar">AM</div>
             </div>
-            <div class="card-role">Project Lead</div>
             <div class="card-name">Arjun Mehta</div>
-            <div class="card-tech">Spring Boot · REST API</div>
             <span class="card-cta">View Profile</span>
         </a>
 
-        <a class="card fade-in" href="member2.html">
+        <a class="card fade-in" href="templates/Member2Page1.html">
             <div class="card-bar"></div>
             <div class="avatar-wrap">
                 <div class="avatar-ring"></div>
                 <div class="avatar">PS</div>
             </div>
-            <div class="card-role">Backend Developer</div>
             <div class="card-name">Priya Sharma</div>
-            <div class="card-tech">Java · Spring Data JPA</div>
             <span class="card-cta">View Profile</span>
         </a>
 
-        <a class="card fade-in" href="member3.html">
+        <a class="card fade-in" href="templates/Member3Page1.html">
             <div class="card-bar"></div>
             <div class="avatar-wrap">
                 <div class="avatar-ring"></div>
                 <div class="avatar">RV</div>
             </div>
-            <div class="card-role">Frontend Developer</div>
             <div class="card-name">Rohan Verma</div>
-            <div class="card-tech">HTML · CSS · Thymeleaf</div>
             <span class="card-cta">View Profile</span>
         </a>
 
-        <a class="card fade-in" href="member4.html">
+        <a class="card fade-in" href="templates/Member4Page1.html">
             <div class="card-bar"></div>
             <div class="avatar-wrap">
                 <div class="avatar-ring"></div>
                 <div class="avatar">SK</div>
             </div>
-            <div class="card-role">Database</div>
             <div class="card-name">Sneha Kulkarni</div>
-            <div class="card-tech">MySQL · Schema Design</div>
             <span class="card-cta">View Profile</span>
         </a>
 
-        <a class="card fade-in" href="member5.html">
+        <a class="card fade-in" href="templates/Member5Page1.html">
             <div class="card-bar"></div>
             <div class="avatar-wrap">
                 <div class="avatar-ring"></div>
                 <div class="avatar">VP</div>
             </div>
-            <div class="card-role">Testing &amp; QA</div>
             <div class="card-name">Vikram Patil</div>
-            <div class="card-tech">JUnit · Spring Test</div>
-            <span class="card-cta">View Profile</span>
-        </a>
-
-        <a class="card fade-in" href="member6.html">
-            <div class="card-bar"></div>
-            <div class="avatar-wrap">
-                <div class="avatar-ring"></div>
-                <div class="avatar">AJ</div>
-            </div>
-            <div class="card-role">UI / UX</div>
-            <div class="card-name">Ananya Joshi</div>
-            <div class="card-tech">Figma · CSS</div>
             <span class="card-cta">View Profile</span>
         </a>
 
     </div>
 </div>
 
-<!-- FOOTER -->
 <footer>
     <div class="footer-inner">
         <div class="footer-dot"></div>
