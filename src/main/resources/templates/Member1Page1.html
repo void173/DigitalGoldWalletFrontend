@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Member Directory | Digital Gold</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --bg-dark: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --modal-bg: #151515;
+        }
+
+        body {
+            background: radial-gradient(circle at center, #1a1a1a 0%, #000000 100%);
+            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 50px;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            text-align: center;
+            font-size: 2.5rem;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+        }
+
+        .top-bar { text-align: right; margin-bottom: 20px; width: 90%; margin-left: auto; margin-right: auto; }
+
+        table {
+            width: 95%;
+            margin: 0 auto;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+        }
+
+        th {
+            color: var(--gold);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            padding: 20px;
+            background: rgba(212, 175, 55, 0.05);
+            border-bottom: 1px solid var(--gold);
+        }
+
+        td {
+            background: var(--glass);
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        tr:hover td { background: rgba(212, 175, 55, 0.08); cursor: pointer; }
+
+        .search-container {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        input {
+            background: #111;
+            border: 1px solid #333;
+            color: #fff;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        button {
+            background: var(--gold);
+            color: #000;
+            border: none;
+            padding: 8px 15px;
+            font-weight: 600;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        button:hover { opacity: 0.8; box-shadow: 0 0 10px var(--gold); }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            margin-left: 5px;
+        }
+
+        .pagination { text-align: center; margin-top: 30px; min-height: 40px; }
+        .page-btn {
+            background: transparent;
+            border: 1px solid #444;
+            color: #fff;
+            width: 35px;
+            height: 35px;
+            margin: 0 5px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .page-btn.active { border-color: var(--gold); color: var(--gold); }
+
+        .modal-overlay {
+            position: fixed;
+            top:0; left:0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-card {
+            background: var(--modal-bg);
+            border: 1px solid var(--gold);
+            padding: 30px;
+            width: 400px;
+            border-radius: 12px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .modal-card h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            margin-top: 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn{
+            position:absolute;
+            top:20px;
+            left:20px;
+        }
+
+        .back-btn button{
+            background: transparent;
+            border:1px solid var(--gold);
+            color: var(--gold);
+            padding:8px 14px;
+            cursor:pointer;
+            font-weight:600;
+        }
+
+        .back-btn button:hover{
+            background: var(--gold);
+            color:black;
+        }
+
+        .modal-form { display: flex; flex-direction: column; gap: 15px; }
+        .modal-form label { font-size: 0.75rem; color: #888; text-transform: uppercase; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+
+        .breadcrumb {
+            width: 90%;
+            margin: 0 auto 20px auto;
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+        .breadcrumb span { cursor: pointer; }
+        .breadcrumb .separator { margin: 0 8px; color: #555; }
+        .breadcrumb .active { color: var(--gold); cursor: default; }
+        .breadcrumb span:hover:not(.active) { color: var(--gold); }
+    </style>
+</head>
+<body>
+<div class="breadcrumb">
+    <span onclick="goHome()">Home</span>
+    <span class="separator">/</span>
+    <span class="active">Members</span>
+</div>
+
+<div class="back-btn">
+    <button onclick="goBack()">Back</button>
+</div>
+
+<h2>Vault Members</h2>
+<div class="subtitle">Digital Finance • Gold Backed</div>
+
+<div class="top-bar">
+    <button onclick="showModal('add')">+ Create New Account</button>
+</div>
+
+<table>
+    <thead>
+    <tr>
+        <th>Sr.</th>
+        <th>UID</th>
+        <th>
+            Name
+            <div class="search-container">
+                <input id="nameSearch" placeholder="Filter name...">
+                <div>
+                    <button onclick="searchUsers()">Find</button>
+                    <button class="btn-outline" onclick="clearSearch()">Clear</button>
+                </div>
+            </div>
+        </th>
+        <th>
+            Email
+            <div class="search-container">
+                <input id="emailSearch" placeholder="Filter email...">
+                <div>
+                    <button onclick="searchUsers()">Find</button>
+                    <button class="btn-outline" onclick="clearSearch()">Clear</button>
+                </div>
+            </div>
+        </th>
+        <th>Balance</th>
+        <th>Joined</th>
+        <th>Management</th>
+    </tr>
+    </thead>
+    <tbody id="usersTable"></tbody>
+</table>
+
+<div id="pagination" class="pagination"></div>
+
+<div id="uiModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3 id="modalTitle">Account Action</h3>
+        <div class="modal-form">
+            <div id="field-name">
+                <label>Account Holder Name</label>
+                <input type="text" id="inputName" style="width: 100%; box-sizing: border-box;">
+                <div id="nameError" class="error-text" style="color:red; font-size:12px;"></div>
+                <div id="updateNameError" class="error-text" style="color:red; font-size:12px;"></div>
+            </div>
+
+            <div id="field-email">
+                <label>Email Address</label>
+                <input type="email" id="inputEmail" style="width: 100%; box-sizing: border-box;">
+                <div id="emailError" class="error-text" style="color:red; font-size:12px;"></div>
+                <div id="updateEmailError" class="error-text" style="color:red; font-size:12px;"></div>
+            </div>
+
+            <div id="address-section">
+                <div id="field-street">
+                    <label>Street</label>
+                    <input type="text" id="inputStreet" style="width: 100%; box-sizing: border-box;">
+                    <div id="streetError" class="error-text" style="color:red; font-size:12px;"></div>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <div id="field-city" style="flex: 1;">
+                        <label>City</label>
+                        <input type="text" id="inputCity" style="width: 100%; box-sizing: border-box;">
+                        <div id="cityError" class="error-text" style="color:red; font-size:12px;"></div>
+                    </div>
+                    <div id="field-state" style="flex: 1;">
+                        <label>State</label>
+                        <input type="text" id="inputState" style="width: 100%; box-sizing: border-box;">
+                        <div id="stateError" class="error-text" style="color:red; font-size:12px;"></div>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <div id="field-postal" style="flex: 1;">
+                        <label>Postal Code</label>
+                        <input type="text" id="inputPostal" style="width: 100%; box-sizing: border-box;">
+                        <div id="postalError" class="error-text" style="color:red; font-size:12px;"></div>
+                    </div>
+                    <div id="field-country" style="flex: 1;">
+                        <label>Country</label>
+                        <input type="text" id="inputCountry" style="width: 100%; box-sizing: border-box;">
+                        <div id="countryError" class="error-text" style="color:red; font-size:12px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="field-amount" style="display: none;">
+                <label>Deposit Amount (₹)</label>
+                <input type="number" id="inputAmount" min="1" step="0.01" style="width: 100%; box-sizing: border-box;">
+                <div id="depositError" class="error-text" style="color:red; font-size:12px;"></div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-outline" onclick="closeModal()">Cancel</button>
+            <button id="modalSubmitBtn">Confirm</button>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    const BACKEND_URL = /*[[${@environment.getProperty('backend.base-url')}]]*/ "http://localhost:8080";
+    const BASE_URL = BACKEND_URL + "/users";
+    const DEPOSIT_URL = BACKEND_URL + "/user/deposit";
+
+    let currentPage = 0;
+    let currentURL = BASE_URL;
+
+    const modal = document.getElementById('uiModal');
+    const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = date.toLocaleString('default', { month: 'long' });
+        const year = date.getFullYear();
+        return `${day} ${month} ${year}`;
+    }
+
+    function showModal(mode, data = {}) {
+        const allFields = ['field-name', 'field-email', 'address-section', 'field-amount'];
+        allFields.forEach(id => document.getElementById(id).style.display = 'none');
+        document.querySelectorAll('.error-text').forEach(el => el.innerText = "");
+
+        if (mode === 'add') {
+            document.getElementById('modalTitle').innerText = 'Create New Vault';
+            document.getElementById('field-name').style.display = 'block';
+            document.getElementById('field-email').style.display = 'block';
+            document.getElementById('address-section').style.display = 'block';
+            ['inputName', 'inputEmail', 'inputStreet', 'inputCity', 'inputState', 'inputPostal', 'inputCountry'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            modalSubmitBtn.onclick = executeAddUser;
+        } else if (mode === 'deposit') {
+            document.getElementById('modalTitle').innerText = 'Gold Deposit';
+            document.getElementById('field-amount').style.display = 'block';
+            document.getElementById('inputAmount').value = '';
+            modalSubmitBtn.onclick = () => executeDeposit(data.id);
+        } else if (mode === 'edit') {
+            document.getElementById('modalTitle').innerText = 'Edit Member';
+            document.getElementById('field-name').style.display = 'block';
+            document.getElementById('field-email').style.display = 'block';
+            document.getElementById('inputName').value = data.name;
+            document.getElementById('inputEmail').value = data.email;
+            modalSubmitBtn.onclick = () => executeUpdateUser(data.id);
+        }
+        modal.style.display = 'flex';
+    }
+
+    function goBack() { window.location.href = "/"; }
+    function closeModal() { modal.style.display = 'none'; }
+
+    function loadUsers(page = 0) {
+        currentPage = page;
+        let url = currentURL.includes("?") ? `${currentURL}&page=${page}&size=20` : `${currentURL}?page=${page}&size=20`;
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                const table = document.getElementById("usersTable");
+                table.innerHTML = "";
+
+                if (data._embedded && data._embedded.userses && data._embedded.userses.length > 0) {
+                    const users = data._embedded.userses;
+                    users.forEach((user, index) => {
+                        const userId = user._links.self.href.split("/").pop();
+                        table.innerHTML += `
+                            <tr onclick="viewUser(${userId})">
+                                <td>${index + 1 + page * 20}</td>
+                                <td style="color:var(--gold)">#${userId}</td>
+                                <td>${user.name}</td>
+                                <td>${user.email}</td>
+                                <td>₹${user.balance}</td>
+                                <td>${formatDate(user.createdAt)}</td>
+                                <td onclick="event.stopPropagation()">
+                                    <button onclick="showModal('deposit', {id: ${userId}})">Deposit</button>
+                                    <button class="btn-outline" onclick="showModal('edit', {id: ${userId}, name: '${user.name}', email: '${user.email}'})">Edit</button>
+                                </td>
+                            </tr>`;
+                    });
+
+                    // Update pagination with NEW totalPages, or hide if search result fits on 1 page
+                    if (data.page) {
+                        createPagination(data.page.totalPages);
+                    } else {
+                        createPagination(0);
+                    }
+                } else {
+                    table.innerHTML = `
+                        <tr>
+                            <td colspan="7" style="text-align:center; padding:80px; color:#888; font-style:italic;">
+                                <div style="font-size: 1.2rem; color: var(--gold); margin-bottom: 10px;">No matches found</div>
+                                Try adjusting your search filters or clear them to see all members.
+                            </td>
+                        </tr>`;
+                    createPagination(0);
+                }
+            })
+            .catch(err => {
+                console.error("Error loading users:", err);
+                createPagination(0);
+            });
+    }
+
+    function createPagination(totalPages) {
+        const footer = document.getElementById("pagination");
+        footer.innerHTML = ""; // Always clear first
+
+        if (!totalPages || totalPages <= 1) {
+            footer.style.display = "none";
+            return;
+        }
+
+        footer.style.display = "block";
+        for (let i = 0; i < totalPages; i++) {
+            footer.innerHTML += `
+                <button class="page-btn ${i === currentPage ? 'active' : ''}"
+                        onclick="loadUsers(${i})">${i + 1}
+                </button>`;
+        }
+    }
+
+    function executeDeposit(userId) {
+        const amount = Number(document.getElementById('inputAmount').value);
+        const errorBox = document.getElementById("depositError");
+        errorBox.innerText = "";
+        if(!amount || amount < 1 || amount > 500000){
+            errorBox.innerText = "Enter a valid amount between ₹1 and ₹5,00,000";
+            return;
+        }
+        fetch(`${DEPOSIT_URL}/${userId}?amount=${amount}`,{ method:"PUT" })
+        .then(()=>{
+            closeModal();
+            loadUsers(currentPage);
+        });
+    }
+
+    async function executeUpdateUser(userId) {
+        const name = document.getElementById('inputName').value.trim();
+        const email = document.getElementById('inputEmail').value.trim();
+        const nameErr = document.getElementById("updateNameError");
+        const emailErr = document.getElementById("updateEmailError");
+        nameErr.innerText = ""; emailErr.innerText = "";
+        let isValid = true;
+
+        const nameRegex = /^[A-Za-z\s]+$/;
+        if (!name) { nameErr.innerText = "Name is required"; isValid = false; }
+        else if (!nameRegex.test(name)) { nameErr.innerText = "Name should contain only alphabets and spaces"; isValid = false; }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!email) { emailErr.innerText = "Email is required"; isValid = false; }
+        else if (!emailRegex.test(email)) { emailErr.innerText = "Please enter a valid email address"; isValid = false; }
+
+        if (!isValid) return;
+
+        try {
+            const resCheck = await fetch(`${BACKEND_URL}/users/search/findByEmailContainingIgnoreCase?email=${encodeURIComponent(email)}`);
+            const checkData = await resCheck.json();
+            if (checkData._embedded && checkData._embedded.userses) {
+                const duplicate = checkData._embedded.userses.find(u => {
+                    const id = u._links.self.href.split("/").pop();
+                    return u.email.toLowerCase() === email.toLowerCase() && id != userId;
+                });
+                if (duplicate) { emailErr.innerText = "This email is already registered"; return; }
+            }
+            const response = await fetch(`${BASE_URL}/${userId}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email })
+            });
+            if (response.ok) { closeModal(); loadUsers(currentPage); }
+        } catch (error) { console.error("Update error:", error); }
+    }
+
+    async function executeAddUser() {
+        const name = document.getElementById("inputName").value.trim();
+        const email = document.getElementById("inputEmail").value.trim();
+        const city = document.getElementById("inputCity").value.trim();
+        const state = document.getElementById("inputState").value.trim();
+        const country = document.getElementById("inputCountry").value.trim();
+        const postal = document.getElementById("inputPostal").value.trim();
+        const street = document.getElementById("inputStreet").value.trim();
+
+        const alphaRegex = /^[A-Za-z\s]+$/;
+        const numRegex = /^[0-9]+$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        let isValid = true;
+
+        if (!alphaRegex.test(name)) { document.getElementById("nameError").innerText = "Letters only"; isValid = false; }
+        if (!emailRegex.test(email)) { document.getElementById("emailError").innerText = "Invalid email"; isValid = false; }
+        if (!alphaRegex.test(city)) { document.getElementById("cityError").innerText = "Letters only"; isValid = false; }
+        if (!alphaRegex.test(state)) { document.getElementById("stateError").innerText = "Letters only"; isValid = false; }
+        if (!alphaRegex.test(country)) { document.getElementById("countryError").innerText = "Letters only"; isValid = false; }
+        if (!numRegex.test(postal)) { document.getElementById("postalError").innerText = "Numbers only"; isValid = false; }
+        if (!street) { document.getElementById("streetError").innerText = "Required"; isValid = false; }
+
+        if (!isValid) return;
+
+        try {
+            const addrRes = await fetch(BACKEND_URL + "/addresses", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ street, city, state, postalCode: postal, country })
+            });
+            const addrData = await addrRes.json();
+            const userRes = await fetch(BACKEND_URL + "/users", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email })
+            });
+            const userData = await userRes.json();
+            await fetch(userData._links.self.href + "/address", {
+                method: "PUT",
+                headers: { "Content-Type": "text/uri-list" },
+                body: addrData._links.self.href
+            });
+            closeModal();
+            loadUsers(0);
+        } catch (e) { alert("Transaction failed."); }
+    }
+
+    function viewUser(userId){ window.location.href = "Member1Page2?userId=" + userId; }
+
+    function searchUsers(){
+        const name = document.getElementById("nameSearch").value.trim();
+        const email = document.getElementById("emailSearch").value.trim();
+        if(name) currentURL = `${BACKEND_URL}/users/search/findByNameContainingIgnoreCase?name=${encodeURIComponent(name)}`;
+        else if(email) currentURL = `${BACKEND_URL}/users/search/findByEmailContainingIgnoreCase?email=${encodeURIComponent(email)}`;
+        loadUsers(0);
+    }
+
+    function clearSearch(){
+        document.getElementById("nameSearch").value="";
+        document.getElementById("emailSearch").value="";
+        currentURL = BASE_URL;
+        loadUsers(0);
+    }
+
+    function goHome() { window.location.href = "/"; }
+
+    loadUsers();
+</script>
+</body>
+</html>
