@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Add Vendor</title>
+    <link rel="stylesheet" href="../css/addVendorForm.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Add Vendor</h2>
+
+    <form id="vendorForm">
+
+        <label>Vendor Name *</label>
+        <input type="text" id="vendorName" required>
+
+        <label>Description</label>
+        <input type="text" id="description">
+
+        <label>Gold Quantity *</label>
+        <input type="number" id="totalGoldQuantity" min="1" required>
+
+        <label>Gold Price *</label>
+        <input type="number" id="currentGoldPrice" min="1" required>
+
+        <label>Contact Person *</label>
+        <input type="text" id="contactPersonName" required>
+
+        <label>Email *</label>
+        <input type="email" id="contactEmail" required>
+
+        <label>Phone *</label>
+        <input type="text" id="contactPhone" required>
+
+        <label>Website</label>
+        <input type="text" id="websiteUrl">
+
+        <button type="button" onclick="saveVendor()">Save Vendor</button>
+
+    </form>
+
+
+
+<script src="../js/addVendor.js"></script>
+</div>
+</body>
+</html>

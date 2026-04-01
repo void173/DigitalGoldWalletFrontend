@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Vendor</title>
+    <link rel="stylesheet" href="../css/addVendorForm.css">
+</head>
+
+<body onload="init()">
+
+<div class="container">
+    <h2>Update Vendor</h2>
+
+    <form id="vendorForm">
+
+        <label>Vendor Name:</label>
+        <input type="text" id="vendorName">
+
+        <label>Description:</label>
+        <input type="text" id="description">
+
+        <label>Gold Quantity:</label>
+        <input type="number" id="totalGoldQuantity">
+
+        <label>Gold Price:</label>
+        <input type="number" id="currentGoldPrice">
+
+        <label>Contact Person:</label>
+        <input type="text" id="contactPersonName">
+
+        <label>Email:</label>
+        <input type="email" id="contactEmail">
+
+        <label>Phone:</label>
+        <input type="text" id="contactPhone">
+
+        <label>Website:</label>
+        <input type="text" id="websiteUrl">
+
+        <button type="button" onclick="updateVendor()">Update</button>
+
+    </form>
+</div>
+
+<script src="../js/updateVendor.js"></script>
+
+</body>
+</html>
