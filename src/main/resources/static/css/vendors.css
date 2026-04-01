@@ -1,0 +1,114 @@
+/* ── BASE ── */
+body {
+  font-family: 'Inter', sans-serif;
+  background: #080705;
+  color: #ede6d8;
+  margin: 0;
+  padding: 30px;
+}
+
+/* ── HEADER ── */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 26px;
+  font-weight: 500;
+}
+
+/* ── BUTTONS ── */
+button {
+  background: #1e1a10;
+  border: 1px solid #c9973f;
+  color: #c9973f;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+button:hover {
+  background: rgba(201,151,63,0.15);
+  color: #e8c97a;
+}
+
+/* ── TABLE ── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  background: #0f0d09;
+  border: 1px solid #252018;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+thead {
+  background: #0c0a07;
+}
+
+th {
+  padding: 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #8a7e6a;
+  text-align: left;
+}
+
+td {
+  padding: 12px;
+  font-size: 14px;
+  color: #cfc6b2;
+  border-top: 1px solid #1a1712;
+}
+
+tr:hover {
+  background: #141108;
+}
+
+/* ── ACTION BUTTONS ── */
+td button {
+  margin-right: 5px;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+/* ── PAGINATION ── */
+#pagination {
+  margin-top: 20px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+#pagination button {
+  padding: 6px 10px;
+  font-size: 13px;
+  border-radius: 5px;
+}
+
+#pagination button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+#pagination button:hover:not(:disabled) {
+  background: rgba(201,151,63,0.2);
+}
+
+/* ACTIVE PAGE */
+#pagination button[style*="bold"] {
+  background: #c9973f;
+  color: black;
+}
+
+/* ── LOAD BUTTON ── */
+.load-btn {
+  margin-bottom: 10px;
+}
