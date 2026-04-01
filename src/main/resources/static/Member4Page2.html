@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gold Transactions</title>
+    <style>
+        :root {
+      --gold: #C9973F;
+      --gold-dim: #9a7830;
+      --gold-pale: #e8c97a;
+      --bg: #080705;
+      --card-bg: #0f0d09;
+      --border: #252018;
+      --text: #ede6d8;
+      --muted: #8a7e6a;
+    }
+
+    /* RESET */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(circle at top, #0f0d09, #000);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* BACK BUTTON */
+    .back-btn {
+      margin: 20px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--gold-pale);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .back-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* TITLE */
+    h1 {
+      text-align: center;
+      font-size: 2.4rem;
+      margin-top: 10px;
+      font-family: "Cormorant Garamond", serif;
+      color: var(--gold);
+    }
+
+    /* STATUS */
+    #status {
+      text-align: center;
+      margin-top: 10px;
+      color: var(--muted);
+    }
+
+    /* TABLE */
+    table {
+      width: 92%;
+      margin: 30px auto;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      min-width: 900px;
+    }
+
+    /* HEADER */
+    th {
+      background: #0c0a07;
+      color: var(--gold-pale);
+      padding: 14px;
+      font-size: 12px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* CELLS */
+    td {
+      padding: 14px;
+      border-bottom: 1px solid #1a1712;
+      color: var(--text);
+      font-size: 0.92rem;
+    }
+
+    tr:hover {
+      background: rgba(201,151,63,0.06);
+      transition: 0.2s;
+    }
+
+    /* BUTTONS */
+    .action-btn {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .physical-btn {
+      background: rgba(178,34,34,0.15);
+      color: #ff8b8b;
+      border-color: #3a1a1a;
+    }
+
+    .virtual-btn {
+      background: rgba(30,144,255,0.12);
+      color: #8cc6ff;
+      border-color: #1b2f44;
+    }
+
+    .action-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* LOADING */
+    .loading {
+      text-align: center;
+      color: var(--muted);
+      padding: 20px;
+    }
+
+    .error {
+      color: #ff6b6b;
+      text-align: center;
+    }
+        .physical-btn {
+      background: transparent !important;
+      border: 1px solid #3a2e16 !important;
+      color: #e8c97a !important;
+    }
+
+    .physical-btn:hover {
+      background: rgba(201,151,63,0.12) !important;
+    }
+
+    .virtual-btn {
+      background: transparent !important;
+      border: 1px solid #3a2e16 !important;
+      color: #e8c97a !important;
+    }
+
+    .virtual-btn:hover {
+      background: rgba(201,151,63,0.12) !important;
+    }
+
+    </style>
+</head>
+<body>
+
+<button class="back-btn" onclick="goBack()">← Back to Vendors List</button>
+
+<h1>Physical Gold Transactions</h1>
+
+
+<p id="status" class="loading"></p>
+<table id="transactionsTable">
+    <thead>
+    <tr id="tableHeader"></tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script src="./js/member4page2.js"></script>
+
+</body>
+</html>
