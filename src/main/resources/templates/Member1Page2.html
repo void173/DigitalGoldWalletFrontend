@@ -1,271 +1,3 @@
-<!--<!DOCTYPE html>-->
-<!--<html>-->
-<!--<head>-->
-<!--    <title>User Details</title>-->
-
-<!--    <style>-->
-
-<!--        table{-->
-<!--            border-collapse: collapse;-->
-<!--            margin:30px auto;-->
-<!--            width:40%;-->
-<!--        }-->
-
-<!--        td,th{-->
-<!--            border:1px solid black;-->
-<!--            padding:10px;-->
-<!--        }-->
-
-<!--        th{-->
-<!--            background:#f2f2f2;-->
-<!--            width:40%;-->
-<!--        }-->
-
-<!--        h2{-->
-<!--            text-align:center;-->
-<!--        }-->
-
-<!--        button{-->
-<!--            display:block;-->
-<!--            margin:20px auto;-->
-<!--            padding:8px 15px;-->
-<!--        }-->
-
-<!--        /* statistics */-->
-
-<!--        #statsBox{-->
-<!--            display:flex;-->
-<!--            justify-content:center;-->
-<!--            gap:30px;-->
-<!--            margin-top:20px;-->
-<!--        }-->
-
-<!--        .statCard{-->
-<!--            border:1px solid black;-->
-<!--            padding:15px;-->
-<!--            width:200px;-->
-<!--            text-align:center;-->
-<!--            font-weight:bold;-->
-<!--            background:#f5f5f5;-->
-<!--        }-->
-
-<!--        /* transactions table */-->
-
-<!--        #physicalTransactions{-->
-<!--            width:90%;-->
-<!--            margin:30px auto;-->
-<!--        }-->
-
-<!--    </style>-->
-
-<!--</head>-->
-
-<!--<body>-->
-
-<!--<h2>User Details</h2>-->
-
-<!--<table id="userDetails"></table>-->
-
-
-<!--&lt;!&ndash; STATISTICS &ndash;&gt;-->
-
-<!--<div id="statsBox"></div>-->
-
-
-<!--<h2>Physical Gold Transactions</h2>-->
-
-<!--<table id="physicalTransactions">-->
-
-<!--    <thead>-->
-<!--    <tr>-->
-<!--        <th>Transaction ID</th>-->
-<!--        <th>Quantity</th>-->
-<!--        <th>Amount</th>-->
-<!--        <th>Vendor</th>-->
-<!--        <th>Contact Person</th>-->
-<!--        <th>Email</th>-->
-<!--        <th>Phone</th>-->
-<!--        <th>Branch Address</th>-->
-<!--        <th>Type</th>-->
-<!--        <th>Status</th>-->
-<!--        <th>Date</th>-->
-<!--    </tr>-->
-<!--    </thead>-->
-
-<!--    <tbody></tbody>-->
-
-<!--</table>-->
-
-
-<!--<button onclick="goBack()">Back</button>-->
-
-
-<!--<script>-->
-
-<!--    const BASE_URL="http://localhost:8080/users";-->
-<!--    const PHYSICAL_URL="http://localhost:8080/user/physical";-->
-
-
-<!--    function getUserId(){-->
-
-<!--    const params=new URLSearchParams(window.location.search);-->
-
-<!--    return params.get("userId");-->
-
-<!--    }-->
-
-
-<!--    /* LOAD USER DETAILS */-->
-
-<!--    function loadUser(){-->
-
-<!--    const userId=getUserId();-->
-
-<!--    fetch(`${BASE_URL}/${userId}`)-->
-<!--    .then(res=>res.json())-->
-<!--    .then(user=>{-->
-
-<!--    const table=document.getElementById("userDetails");-->
-
-<!--    table.innerHTML=`-->
-
-<!--    <tr>-->
-<!--    <th>User ID</th>-->
-<!--    <td>${userId}</td>-->
-<!--    </tr>-->
-
-<!--    <tr>-->
-<!--    <th>Name</th>-->
-<!--    <td>${user.name}</td>-->
-<!--    </tr>-->
-
-<!--    <tr>-->
-<!--    <th>Email</th>-->
-<!--    <td>${user.email}</td>-->
-<!--    </tr>-->
-
-<!--    <tr>-->
-<!--    <th>Balance</th>-->
-<!--    <td>${user.balance}</td>-->
-<!--    </tr>-->
-
-<!--    <tr>-->
-<!--    <th>Created At</th>-->
-<!--    <td>${user.createdAt}</td>-->
-<!--    </tr>-->
-
-<!--    `;-->
-
-<!--    });-->
-
-<!--    }-->
-
-
-
-<!--    /* LOAD PHYSICAL GOLD TRANSACTIONS */-->
-
-<!--    function loadPhysicalTransactions(){-->
-
-<!--    const userId=getUserId();-->
-
-<!--    fetch(`${PHYSICAL_URL}/${userId}`)-->
-<!--    .then(res=>res.json())-->
-<!--    .then(data=>{-->
-
-<!--    const table=document.querySelector("#physicalTransactions tbody");-->
-
-<!--    table.innerHTML="";-->
-
-<!--    let totalQty=0;-->
-<!--    let totalAmt=0;-->
-
-<!--    data.forEach(tx=>{-->
-
-<!--    totalQty += Number(tx.quantity || 0);-->
-<!--    totalAmt += Number(tx.amount || 0);-->
-
-<!--    table.innerHTML += `-->
-
-<!--    <tr>-->
-
-<!--    <td>${tx.transactionId}</td>-->
-
-<!--    <td>${tx.quantity}</td>-->
-
-<!--    <td>${tx.amount}</td>-->
-
-<!--    <td>${tx.branch?.vendors?.vendorName || "-"}</td>-->
-
-<!--    <td>${tx.branch?.vendors?.contactPersonName || "-"}</td>-->
-
-<!--    <td>${tx.branch?.vendors?.contactEmail || "-"}</td>-->
-
-<!--    <td>${tx.branch?.vendors?.contactPhone || "-"}</td>-->
-
-<!--    <td>-->
-<!--    ${tx.branch?.address?.street || ""}-->
-<!--    ${tx.branch?.address?.city || ""}-->
-<!--    ${tx.branch?.address?.state || ""}-->
-<!--    ${tx.branch?.address?.country || ""}-->
-<!--    </td>-->
-
-<!--    <td>${tx.transactionType || "-"}</td>-->
-<!--    <td>${tx.transactionStatus || "-"}</td>-->
-
-<!--    <td>${tx.createdAt}</td>-->
-
-<!--    </tr>-->
-
-<!--    `;-->
-
-<!--    });-->
-
-
-<!--    /* statistics */-->
-
-<!--    document.getElementById("statsBox").innerHTML=`-->
-
-<!--    <div class="statCard">-->
-<!--    Total Physical Gold<br>-->
-<!--    ${totalQty} g-->
-<!--    </div>-->
-
-<!--    <div class="statCard">-->
-<!--    Total Amount<br>-->
-<!--    Rs. ${totalAmt}-->
-<!--    </div>-->
-
-<!--    <div class="statCard">-->
-<!--    Total Transactions<br>-->
-<!--    ${data.length}-->
-<!--    </div>-->
-
-<!--    `;-->
-
-<!--    });-->
-
-<!--    }-->
-
-
-
-<!--    function goBack(){-->
-
-<!--    window.history.back();-->
-
-<!--    }-->
-
-
-<!--    loadUser();-->
-<!--    loadPhysicalTransactions();-->
-
-<!--</script>-->
-
-<!--</body>-->
-<!--</html>-->
-
-
-
-
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
@@ -406,6 +138,16 @@
             transition: 0.3s;
         }
 
+        .table-container{
+            overflow-x:hidden;
+        }
+
+        #physicalTransactions{
+            table-layout:fixed;
+            word-wrap:break-word;
+            width:100%;
+        }
+
         button:hover {
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
             transform: translateY(-2px);
@@ -541,41 +283,68 @@
     });
 }
 
-            function loadPhysicalTransactions(){
-                const userId=getUserId();
-                fetch(`${PHYSICAL_URL}/${userId}`)
-                .then(res=>res.json())
-                .then(data=>{
-                    const table=document.querySelector("#physicalTransactions tbody");
-                    table.innerHTML="";
-                    let totalQty=0, totalAmt=0;
+            function loadPhysicalTransactions() {
+    const userId = getUserId();
+    fetch(`${PHYSICAL_URL}/${userId}`)
+        .then(res => res.json())
+        .then(data => {
+            const tableBody = document.querySelector("#physicalTransactions tbody");
+            const statsBox = document.getElementById("statsBox");
 
-                    data.forEach(tx=>{
-                        totalQty += Number(tx.quantity || 0);
-                        totalAmt += Number(tx.amount || 0);
-                        table.innerHTML += `
-                            <tr>
-                                <td>${tx.transactionId}</td>
-                                <td style="color:var(--gold)">${tx.quantity}g</td>
-                                <td>₹${tx.amount}</td>
-                                <td>${tx.branch?.vendors?.vendorName || "-"}</td>
-                                <td>${tx.branch?.vendors?.contactPersonName || "-"}</td>
-                                <td>${tx.branch?.vendors?.contactEmail || "-"}</td>
-                                <td>${tx.branch?.vendors?.contactPhone || "-"}</td>
-                                <td>${tx.branch?.address?.city || "-"}</td>
-                                <td>${tx.transactionType}</td>
-                                <td>${tx.transactionStatus}</td>
-                                <td>${tx.createdAt}</td>
-                            </tr>`;
-                    });
+            tableBody.innerHTML = "";
+            let totalQty = 0, totalAmt = 0;
 
-                    document.getElementById("statsBox").innerHTML=`
-                        <div class="statCard"><span class="statLabel">Vaulted Gold</span><span class="statValue">${totalQty}g</span></div>
-                        <div class="statCard"><span class="statLabel">Asset Value</span><span class="statValue">₹${totalAmt}</span></div>
-                        <div class="statCard"><span class="statLabel">Total Orders</span><span class="statValue">${data.length}</span></div>
-                    `;
-                });
+            // Check if data is empty or null
+            if (!data || data.length === 0) {
+                // Show "No records" in the table
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="11" style="text-align:center; padding:50px; color:#888; font-style:italic;">
+                            No physical gold transactions recorded for this account.
+                        </td>
+                    </tr>`;
+
+                // Set stats to zero
+                statsBox.innerHTML = `
+                    <div class="statCard"><span class="statLabel">Vaulted Gold</span><span class="statValue">0g</span></div>
+                    <div class="statCard"><span class="statLabel">Asset Value</span><span class="statValue">₹0</span></div>
+                    <div class="statCard"><span class="statLabel">Total Orders</span><span class="statValue">0</span></div>
+                `;
+                return;
             }
+
+            // If records exist, process them
+            data.forEach(tx => {
+                totalQty += Number(tx.quantity || 0);
+                totalAmt += Number(tx.amount || 0);
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${tx.transactionId}</td>
+                        <td style="color:var(--gold)">${tx.quantity}g</td>
+                        <td>₹${tx.amount}</td>
+                        <td>${tx.branch?.vendors?.vendorName || "-"}</td>
+                        <td>${tx.branch?.vendors?.contactPersonName || "-"}</td>
+                        <td>${tx.branch?.vendors?.contactEmail || "-"}</td>
+                        <td>${tx.branch?.vendors?.contactPhone || "-"}</td>
+                        <td>${tx.branch?.address?.city || "-"}</td>
+                        <td>${tx.transactionType}</td>
+                        <td>${tx.transactionStatus}</td>
+                        <td>${formatDate(tx.createdAt)}</td>
+                    </tr>`;
+            });
+
+            statsBox.innerHTML = `
+                <div class="statCard"><span class="statLabel">Vaulted Gold</span><span class="statValue">${totalQty}g</span></div>
+                <div class="statCard"><span class="statLabel">Asset Value</span><span class="statValue">₹${totalAmt}</span></div>
+                <div class="statCard"><span class="statLabel">Total Orders</span><span class="statValue">${data.length}</span></div>
+            `;
+        })
+        .catch(err => {
+            console.error("Error loading transactions:", err);
+            document.querySelector("#physicalTransactions tbody").innerHTML =
+                "<tr><td colspan='11' style='text-align:center; color:red;'>Failed to load transaction data.</td></tr>";
+        });
+}
 
             function goBack(){ window.history.back(); }
             function goMembers() {
