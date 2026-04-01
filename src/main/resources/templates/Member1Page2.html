@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>User Insights | Digital Gold</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --gold-dark: #8A6D3B;
+            --bg-dark: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(212, 175, 55, 0.2);
+        }
+
+        body {
+            background: radial-gradient(circle at top, #1c1c1c 0%, #000000 100%);
+            color: #e0e0e0;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 50px 10%;
+            min-height: 100vh;
+        }
+
+        h2 {
+            font-family: 'Playfair Display', serif;
+            color: var(--gold);
+            text-align: center;
+            font-size: 2.2rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+        }
+
+        /* User Info Table */
+        #userDetails {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto 50px;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+
+        #userDetails th {
+            text-align: left;
+            color: var(--gold);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            padding: 15px;
+            background: var(--glass);
+            border-left: 2px solid var(--gold);
+        }
+
+        #userDetails td {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            font-weight: 300;
+        }
+
+        /* Statistics Cards */
+        #statsBox {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .statCard {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .statCard:hover {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+        .statLabel {
+            color: var(--gold);
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .statValue {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        /* Large Transactions Table */
+        .table-container {
+            overflow-x: auto;
+            background: var(--glass);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+        }
+
+        table#physicalTransactions {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #physicalTransactions th {
+            border-bottom: 1px solid var(--gold);
+            color: var(--gold);
+            padding: 15px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            text-align: left;
+        }
+
+        #physicalTransactions td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.85rem;
+            color: #ccc;
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            font-weight: 700;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 40px auto;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .table-container{
+            overflow-x:hidden;
+        }
+
+        #physicalTransactions{
+            table-layout:fixed;
+            word-wrap:break-word;
+            width:100%;
+        }
+
+        button:hover {
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+            transform: translateY(-2px);
+        }
+        .breadcrumb {
+    width: 90%;
+    margin: 0 auto 20px auto;
+    color: #aaa;
+    font-size: 0.85rem;
+}
+
+.breadcrumb span {
+    cursor: pointer;
+}
+
+.breadcrumb .separator {
+    margin: 0 8px;
+    color: #555;
+}
+
+.breadcrumb .active {
+    color: var(--gold);
+    cursor: default;
+}
+
+.breadcrumb span:hover:not(.active) {
+    color: var(--gold);
+}
+    </style>
+</head>
+<body>
+<div class="breadcrumb">
+    <span onclick="goHome()">Home</span>
+    <span class="separator">/</span>
+    <span onclick="goMembers()">Members</span>
+    <span class="separator">/</span>
+    <span class="active">User Dashboard</span>
+</div>
+
+<h2>Account Profile</h2>
+<table id="userDetails"></table>
+
+<div id="statsBox"></div>
+
+<h2>Physical Assets</h2>
+<div class="table-container">
+    <table id="physicalTransactions">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Qty (g)</th>
+            <th>Amount</th>
+            <th>Vendor</th>
+            <th>Contact</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Location</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<button onclick="goBack()">Return to Ledger</button>
+
+<script th:inline="javascript">
+    const BACKEND_URL = /*[[${@environment.getProperty('backend.base-url')}]]*/ "http://localhost:8080";
+        const BASE_URL = BACKEND_URL + "/users";
+        const PHYSICAL_URL = BACKEND_URL + "/user/physical";
+
+            function getUserId(){
+                const params=new URLSearchParams(window.location.search);
+                return params.get("userId");
+            }
+
+            function formatDate(dateString){
+    const date = new Date(dateString);
+
+    const day = String(date.getDate()).padStart(2,'0');
+
+    const month = date.toLocaleString('default',{month:'long'});
+
+    const year = date.getFullYear();
+
+    return `${day} ${month} ${year}`;
+}
+
+            function loadUser(){
+    const userId=getUserId();
+
+    fetch(`${BASE_URL}/${userId}`)
+    .then(res=>res.json())
+    .then(user=>{
+
+        const addressLink = user._links.address.href;
+
+        fetch(addressLink)
+        .then(res=>{
+            if(!res.ok){
+                return null;   // address not found
+            }
+            return res.json();
+        })
+        .then(address=>{
+
+            let addressText = "Not Available";
+
+            if(address){
+                addressText = `
+                    ${address.street || ""}
+                    ${address.city || ""}
+                    ${address.state || ""}
+                    ${address.postalCode || ""}
+                    ${address.country || ""}
+                `;
+            }
+
+            const table=document.getElementById("userDetails");
+
+            table.innerHTML=`
+                <tr><th>User ID</th><td>#${userId}</td></tr>
+                <tr><th>Name</th><td>${user.name}</td></tr>
+                <tr><th>Email</th><td>${user.email}</td></tr>
+                <tr><th>Wallet Balance</th><td>₹ ${user.balance}</td></tr>
+                <tr><th>Address</th><td>${addressText}</td></tr>
+                <tr><th>Member Since</th><td>${formatDate(user.createdAt)}</td></tr>
+            `;
+        });
+
+    });
+}
+
+            function loadPhysicalTransactions() {
+    const userId = getUserId();
+    fetch(`${PHYSICAL_URL}/${userId}`)
+        .then(res => res.json())
+        .then(data => {
+            const tableBody = document.querySelector("#physicalTransactions tbody");
+            const statsBox = document.getElementById("statsBox");
+
+            tableBody.innerHTML = "";
+            let totalQty = 0, totalAmt = 0;
+
+            // Check if data is empty or null
+            if (!data || data.length === 0) {
+                // Show "No records" in the table
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="11" style="text-align:center; padding:50px; color:#888; font-style:italic;">
+                            No physical gold transactions recorded for this account.
+                        </td>
+                    </tr>`;
+
+                // Set stats to zero
+                statsBox.innerHTML = `
+                    <div class="statCard"><span class="statLabel">Vaulted Gold</span><span class="statValue">0g</span></div>
+                    <div class="statCard"><span class="statLabel">Asset Value</span><span class="statValue">₹0</span></div>
+                    <div class="statCard"><span class="statLabel">Total Orders</span><span class="statValue">0</span></div>
+                `;
+                return;
+            }
+
+            // If records exist, process them
+            data.forEach(tx => {
+                totalQty += Number(tx.quantity || 0);
+                totalAmt += Number(tx.amount || 0);
+                tableBody.innerHTML += `
+                    <tr>
+                        <td>${tx.transactionId}</td>
+                        <td style="color:var(--gold)">${tx.quantity}g</td>
+                        <td>₹${tx.amount}</td>
+                        <td>${tx.branch?.vendors?.vendorName || "-"}</td>
+                        <td>${tx.branch?.vendors?.contactPersonName || "-"}</td>
+                        <td>${tx.branch?.vendors?.contactEmail || "-"}</td>
+                        <td>${tx.branch?.vendors?.contactPhone || "-"}</td>
+                        <td>${tx.branch?.address?.city || "-"}</td>
+                        <td>${tx.transactionType}</td>
+                        <td>${tx.transactionStatus}</td>
+                        <td>${formatDate(tx.createdAt)}</td>
+                    </tr>`;
+            });
+
+            statsBox.innerHTML = `
+                <div class="statCard"><span class="statLabel">Vaulted Gold</span><span class="statValue">${totalQty}g</span></div>
+                <div class="statCard"><span class="statLabel">Asset Value</span><span class="statValue">₹${totalAmt}</span></div>
+                <div class="statCard"><span class="statLabel">Total Orders</span><span class="statValue">${data.length}</span></div>
+            `;
+        })
+        .catch(err => {
+            console.error("Error loading transactions:", err);
+            document.querySelector("#physicalTransactions tbody").innerHTML =
+                "<tr><td colspan='11' style='text-align:center; color:red;'>Failed to load transaction data.</td></tr>";
+        });
+}
+
+            function goBack(){ window.history.back(); }
+            function goMembers() {
+    window.location.href = "/Member1Page1"; // your members page route
+}
+            loadUser();
+            loadPhysicalTransactions();
+</script>
+</body>
+</html>
