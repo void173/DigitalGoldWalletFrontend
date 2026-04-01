@@ -23,7 +23,7 @@ public class PageController {
 
     @GetMapping("/Member5Page2")
     public String page52() {
-        return "Member5Page2"; // dashboard.html
+        return "Member5Page2";
     }
 
 }
