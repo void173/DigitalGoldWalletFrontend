@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Vendor Branches — Digital Gold Wallet System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="../css/vendorBranchesAddressesStyle.css"/>
+</head>
+<body>
+
+<div class="bg-mesh"></div>
+
+<div class="page-wrap">
+
+    <div class="top-nav">
+        <a class="back-link" href="../index.html">
+            <svg viewBox="0 0 14 14" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Back to Home
+        </a>
+        <div class="nav-brand">Digital Gold Wallet System</div>
+    </div>
+
+    <div class="page-header">
+        <h1>Vendor <em>Branches</em></h1>
+        <p class="page-sub" id="pageSubtitle">Manage vendor branch locations and gold inventory</p>
+    </div>
+
+    <div class="summary-card">
+        <div class="summary-item">
+            <div class="summary-label">Active Filter</div>
+            <div class="summary-value" id="summaryFilterLabel">All Branches</div>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+            <div class="summary-label">Total Branches</div>
+            <div class="summary-value gold" id="summaryBranchCount">—</div>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+            <div class="summary-label">Total Gold (g)</div>
+            <div class="summary-value gold" id="summaryTotalQty">—</div>
+        </div>
+    </div>
+
+    <div class="filter-card">
+        <div class="filter-title">Filter Branches</div>
+        <div class="filter-row" style="margin-bottom:14px;">
+            <div class="filter-group">
+                <label class="filter-label">City Search</label>
+                <input class="filter-select" type="text" id="citySearchInp" placeholder="Type to search…" oninput="debouncedSearch()"/>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">City</label>
+                <select class="filter-select" id="cityFilter"><option value="">All Cities</option></select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">State</label>
+                <select class="filter-select" id="stateFilter"><option value="">All States</option></select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Country</label>
+                <select class="filter-select" id="countryFilter"><option value="">All Countries</option></select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Postal Code</label>
+                <input class="filter-select" type="text" id="postalFilter" placeholder="e.g. 411001"/>
+            </div>
+        </div>
+        <div class="filter-row">
+            <div class="filter-group" style="max-width:120px;">
+                <label class="filter-label">Qty Min</label>
+                <input class="filter-select" type="number" id="qtyMin" placeholder="0" min="0"/>
+            </div>
+            <div class="filter-group" style="max-width:120px;">
+                <label class="filter-label">Qty Max</label>
+                <input class="filter-select" type="number" id="qtyMax" placeholder="max" min="0"/>
+            </div>
+            <div class="filter-group" style="max-width:170px;">
+                <label class="filter-label">Sort Quantity</label>
+                <select class="filter-select" id="sortSelect">
+                    <option value="none">No Sort</option>
+                    <option value="asc">&#8593; Ascending</option>
+                    <option value="desc">&#8595; Descending</option>
+                </select>
+            </div>
+            <div style="display:flex;gap:8px;align-self:flex-end;flex-wrap:wrap;">
+                <button class="reset-btn apply-btn" onclick="applyFilters()">Apply</button>
+                <button class="reset-btn" onclick="applyQtyRange()">Filter Qty</button>
+                <button class="reset-btn" onclick="resetAll()">Reset All</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="table-scroll">
+            <table class="branch-table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Country</th>
+                    <th>Address</th>
+                    <th>Postal</th>
+                    <th class="sortable-col" onclick="toggleColSort()" title="Click to sort by quantity">
+                        Gold Qty (g)&nbsp;<span id="qtySortArrow">&#8597;</span>
+                    </th>
+                    <th>Vendor Name</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody id="branchTableBody">
+                <tr><td colspan="9" class="table-loading"><span class="loader"></span>Loading branches&#8230;</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination" id="paginationBar">
+            <div class="pg-info" id="pgInfo">&#8212;</div>
+            <div class="pg-controls" id="pgControls"></div>
+        </div>
+        <div class="table-footer">
+            <span class="count-badge" id="countBadge">&#8212; branches</span>
+        </div>
+    </div>
+
+</div>
+
+<!-- UPDATE MODAL -->
+<div class="modal-overlay" id="updateModal">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">Update Branch</div>
+            <button class="modal-close" onclick="closeModal('updateModal')">&#10005;</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="updateBranchId"/>
+            <input type="hidden" id="updateAddressId"/>
+
+            <div style="margin-bottom:18px;">
+                <div style="font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+                            color:var(--gold,#d4af37);margin-bottom:10px;padding-bottom:6px;
+                            border-bottom:1px solid rgba(212,175,55,.18);">
+                    Gold Quantity
+                </div>
+                <div class="form-row">
+                    <div class="form-group" style="max-width:200px;">
+                        <label class="form-label">Quantity (g)</label>
+                        <input class="form-input" type="number" id="updateQty" step="0.01" min="0"/>
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div style="font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+                            color:var(--gold,#d4af37);margin-bottom:10px;padding-bottom:6px;
+                            border-bottom:1px solid rgba(212,175,55,.18);">
+                    Address
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Street</label>
+                        <input class="form-input" type="text" id="updateStreet" placeholder="Street address"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">City</label>
+                        <input class="form-input" type="text" id="updateCity"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">State</label>
+                        <input class="form-input" type="text" id="updateState"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Postal Code</label>
+                        <input class="form-input" type="text" id="updatePostal"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Country</label>
+                        <input class="form-input" type="text" id="updateCountry"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel"  onclick="closeModal('updateModal')">Cancel</button>
+            <button class="btn-confirm" onclick="submitUpdate()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<footer>
+    <div class="footer-inner">
+        <div class="footer-dot"></div>
+        <div class="footer-text">Digital Gold Wallet System</div>
+        <div class="footer-dot"></div>
+    </div>
+</footer>
+
+<script>
+    const API_BASE  = 'http://localhost:8080';
+    const PAGE_SIZE = 10;
+
+    const S = {
+      mode:'all', params:{}, sort:'none', page:0,
+      totalPages:1, totalElements:0, currentRows:[], _flatCache:null,
+    };
+
+    const enc    = v => encodeURIComponent(v || '');
+    const num    = v => parseFloat(v) || 0;
+    const fmtQty = q => (q != null && q !== '') ? parseFloat(q).toFixed(2) : null;
+    const val    = id => (document.getElementById(id)?.value || '').trim();
+
+    function esc(s) {
+      return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function flatten(r) {
+      const a = (r.address && typeof r.address === 'object') ? r.address : r;
+      return {
+        ...r,
+        _street:    a.street     || r.street    || '',
+        _city:      a.city       || r.city       || r.addressCity    || '',
+        _state:     a.state      || r.state      || r.addressState   || '',
+        _country:   a.country    || r.country    || r.addressCountry || '',
+        _postal:    a.postalCode || r.postalCode || '',
+        _addressId: a.addressId  || r.addressId  || null,
+      };
+    }
+
+    const getId         = r => r.branchId  ?? r.id ?? '';
+    const getQty        = r => r.quantity  ?? r.goldQuantity ?? null;
+    const getVendorName = r => r.vendors?.vendorName ?? r.vendorName ?? '—';
+
+    function extractRows(data) {
+      if (Array.isArray(data)) return data;
+      return data?._embedded?.vendorBranches
+          || data?._embedded?.vendorBranchProjections
+          || data?.content || [];
+    }
+
+    function buildUrl(page) {
+      const { mode, params } = S;
+      const pg = `page=${page}&size=${PAGE_SIZE}`;
+      switch (mode) {
+        case 'all':        return { url: `/vendorBranches?${pg}`, strategy: 'paged' };
+        case 'city':       return { url: `/vendorBranches/search/findByAddressCity?city=${enc(params.city)}&${pg}`, strategy: 'paged' };
+        case 'state':      return { url: `/vendorBranches/search/findByAddressState?state=${enc(params.state)}&${pg}`, strategy: 'paged' };
+        case 'country':    return { url: `/vendorBranches/search/findByAddressCountry?country=${enc(params.country)}&${pg}`, strategy: 'paged' };
+        case 'postal':     return { url: `/vendorBranches/search/findByAddressPostalCode?postalCode=${enc(params.postalCode)}&page=0&size=9999`, strategy: 'list' };
+        case 'qty':        return { url: `/vendorBranches/search/findByQuantityBetween?min=${params.min}&max=${params.max}&page=0&size=9999`, strategy: 'list' };
+        case 'cityState':  return { url: `/vendorBranches/search/findByAddressCityAndAddressState?city=${enc(params.city)}&state=${enc(params.state)}&page=0&size=9999`, strategy: 'list' };
+        case 'citySearch': return { url: `/vendorBranches/search/findByAddressCityContainingIgnoreCase?pun=${enc(params.query)}&page=0&size=9999`, strategy: 'list' };
+        case 'sortAsc':    return { url: `/vendorBranches/search/findByAddressCityOrderByQuantityAsc?pune=${enc(params.city)}&page=0&size=9999`, strategy: 'list' };
+        case 'sortDesc':   return { url: `/vendorBranches/search/findByAddressCityOrderByQuantityDesc?pune=${enc(params.city)}&page=0&size=9999`, strategy: 'list' };
+        default:           return { url: `/vendorBranches?${pg}`, strategy: 'paged' };
+      }
+    }
+
+    async function loadPage(page) {
+      showLoading();
+      try {
+        const { url, strategy } = buildUrl(page);
+        if (strategy === 'paged') {
+          const data = await apiFetch(url);
+          const rows = extractRows(data).map(flatten);
+          const meta = data.page || {};
+          S.page = page; S.totalElements = meta.totalElements ?? rows.length;
+          S.totalPages = meta.totalPages ?? 1; S.currentRows = rows; S._flatCache = null;
+        } else {
+          if (S._flatCache === null) {
+            const data = await apiFetch(url);
+            let rows = extractRows(data).map(flatten);
+            if (S.sort === 'asc')  rows.sort((a,b) => num(getQty(a)) - num(getQty(b)));
+            if (S.sort === 'desc') rows.sort((a,b) => num(getQty(b)) - num(getQty(a)));
+            S._flatCache = rows; S.totalElements = rows.length;
+            S.totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+          }
+          S.page = page;
+          S.currentRows = S._flatCache.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+        }
+        renderTable(); renderPagination(); updateSummary();
+      } catch (err) {
+        console.error(err);
+        document.getElementById('branchTableBody').innerHTML =
+          `<tr><td colspan="9" class="table-empty">&#9888; Cannot connect to server &mdash; make sure the backend is running on port 8080.</td></tr>`;
+        document.getElementById('pgInfo').textContent = '—';
+        document.getElementById('pgControls').innerHTML = '';
+        showToast('Failed to load data. Check backend connection.', true);
+      }
+    }
+
+    async function apiFetch(path) {
+      const res = await fetch(`${API_BASE}${path}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('branchTableBody');
+      if (!S.currentRows.length) {
+        tbody.innerHTML = `<tr><td colspan="9" class="table-empty">No branches match your criteria.</td></tr>`;
+        document.getElementById('countBadge').textContent = '0 branches';
+        return;
+      }
+      const offset = S.page * PAGE_SIZE;
+      tbody.innerHTML = S.currentRows.map((r, i) => {
+        const qty        = getQty(r);
+        const qtyFmt     = qty != null ? fmtQty(qty) + '&thinsp;g' : '—';
+        const rowNum     = String(offset + i + 1).padStart(2, '0');
+        const vendorName = esc(String(getVendorName(r)));
+        const branchId   = getId(r);
+        return `
+        <tr style="animation-delay:${i*0.028}s;cursor:pointer;"
+            onclick="window.location.href='Member3Page2.html?id=${branchId}'"
+            title="Click to view branch details">
+          <td class="td-id">${rowNum}</td>
+          <td class="td-city">${esc(r._city)    || '—'}</td>
+          <td class="td-state">${esc(r._state)   || '—'}</td>
+          <td class="td-country">${esc(r._country) || '—'}</td>
+          <td class="td-address">${esc(r._street)  || '—'}</td>
+          <td class="td-date">${esc(r._postal)   || '—'}</td>
+          <td class="td-qty">${qtyFmt}</td>
+          <td class="td-date">${vendorName}</td>
+          <td class="td-actions" onclick="event.stopPropagation()">
+            <div class="actions-wrap">
+              <button class="action-btn btn-update" onclick="openUpdate(${i})" title="Edit branch">
+                &#9998; Edit
+              </button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+      document.getElementById('countBadge').textContent =
+        `${S.totalElements} ${S.totalElements === 1 ? 'branch' : 'branches'}`;
+    }
+
+    function renderPagination() {
+      const { page, totalPages, totalElements } = S;
+      const start = totalElements ? page * PAGE_SIZE + 1 : 0;
+      const end   = Math.min((page + 1) * PAGE_SIZE, totalElements);
+      document.getElementById('pgInfo').textContent =
+        totalElements ? `${start}–${end} of ${totalElements}` : 'No results';
+      const controls = document.getElementById('pgControls');
+      controls.innerHTML = '';
+      if (totalPages <= 1) return;
+      const mkBtn = (label, pg, disabled, active) => {
+        const b = document.createElement('button');
+        b.className = 'pg-btn' + (active ? ' active' : '');
+        b.innerHTML = label; b.disabled = disabled;
+        if (!disabled && !active) b.onclick = () => loadPage(pg);
+        controls.appendChild(b);
+      };
+      const mkDots = () => { const s = document.createElement('span'); s.className = 'pg-ellipsis'; s.textContent = '…'; controls.appendChild(s); };
+      mkBtn('&#8249;', page - 1, page === 0, false);
+      const lo = Math.max(0, page - 2), hi = Math.min(totalPages - 1, page + 2);
+      if (lo > 0) { mkBtn('1', 0, false, false); if (lo > 1) mkDots(); }
+      for (let i = lo; i <= hi; i++) mkBtn(i + 1, i, false, i === page);
+      if (hi < totalPages - 1) { if (hi < totalPages - 2) mkDots(); mkBtn(totalPages, totalPages - 1, false, false); }
+      mkBtn('&#8250;', page + 1, page >= totalPages - 1, false);
+    }
+
+    function updateSummary() {
+      let totalQtyStr = '—';
+      if (S._flatCache) {
+        const sum = S._flatCache.reduce((acc, r) => acc + num(getQty(r)), 0);
+        totalQtyStr = sum.toFixed(2) + ' g';
+      }
+      document.getElementById('summaryBranchCount').textContent = S.totalElements || '—';
+      document.getElementById('summaryTotalQty').textContent    = totalQtyStr;
+      document.getElementById('summaryFilterLabel').textContent = modeLabel();
+      document.getElementById('pageSubtitle').textContent       = modeLabel();
+    }
+
+    function modeLabel() {
+      const { mode, params } = S;
+      return ({ all:'All Branches', city:`City: ${params.city}`, state:`State: ${params.state}`,
+        country:`Country: ${params.country}`, postal:`Postal: ${params.postalCode}`,
+        qty:`Qty ${params.min} \u2013 ${params.max}\u202fg`, cityState:`${params.city}, ${params.state}`,
+        citySearch:`City contains \u201c${params.query}\u201d`,
+        sortAsc:`${params.city} \u00b7 Qty \u2191`, sortDesc:`${params.city} \u00b7 Qty \u2193`,
+      })[mode] || 'Filtered View';
+    }
+
+    function applyFilters() {
+      const citySearch = val('citySearchInp'), city = val('cityFilter'), st = val('stateFilter');
+      const country = val('countryFilter'), postal = val('postalFilter'), sortVal = val('sortSelect');
+      S.sort = sortVal; S._flatCache = null;
+      if      (citySearch)                 setMode('citySearch', { query: citySearch });
+      else if (postal)                     setMode('postal',     { postalCode: postal });
+      else if (city && st)                 setMode('cityState',  { city, state: st });
+      else if (city && sortVal === 'asc')  setMode('sortAsc',    { city });
+      else if (city && sortVal === 'desc') setMode('sortDesc',   { city });
+      else if (city)                       setMode('city',       { city });
+      else if (st)                         setMode('state',      { state: st });
+      else if (country)                    setMode('country',    { country });
+      else                                 setMode('all',        {});
+      loadPage(0);
+    }
+
+    function applyQtyRange() {
+      const min = val('qtyMin'), max = val('qtyMax');
+      if (!min || !max) { showToast('Enter both Min and Max quantity.', true); return; }
+      S._flatCache = null; setMode('qty', { min, max }); loadPage(0);
+    }
+
+    function resetAll() {
+      ['citySearchInp','cityFilter','stateFilter','countryFilter','postalFilter','qtyMin','qtyMax'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+      });
+      document.getElementById('sortSelect').value = 'none';
+      S.sort = 'none'; S._flatCache = null; setMode('all', {}); updateSortArrow(); loadPage(0);
+    }
+
+    function setMode(mode, params) { S.mode = mode; S.params = params; }
+
+    function toggleColSort() {
+      const next = S.sort === 'none' ? 'asc' : S.sort === 'asc' ? 'desc' : 'none';
+      S.sort = next; document.getElementById('sortSelect').value = next;
+      const city = val('cityFilter') || S.params?.city;
+      if (city && next !== 'none') { S._flatCache = null; setMode(next === 'asc' ? 'sortAsc' : 'sortDesc', { city }); loadPage(0); }
+      else if (next === 'none') { S._flatCache = null; loadPage(S.page); }
+      else if (S._flatCache) {
+        if (next === 'asc')  S._flatCache.sort((a,b) => num(getQty(a)) - num(getQty(b)));
+        if (next === 'desc') S._flatCache.sort((a,b) => num(getQty(b)) - num(getQty(a)));
+        S.currentRows = S._flatCache.slice(S.page * PAGE_SIZE, (S.page + 1) * PAGE_SIZE);
+        renderTable(); renderPagination();
+      } else { loadPage(S.page); }
+      updateSortArrow();
+    }
+
+    function updateSortArrow() {
+      const el = document.getElementById('qtySortArrow'); if (!el) return;
+      el.innerHTML = S.sort === 'asc' ? '&#8593;' : S.sort === 'desc' ? '&#8595;' : '&#8597;';
+      el.style.color = S.sort !== 'none' ? 'var(--gold)' : '';
+      el.style.opacity = S.sort !== 'none' ? '1' : '.45';
+    }
+
+    let _dT;
+    function debouncedSearch() {
+      clearTimeout(_dT);
+      _dT = setTimeout(() => {
+        const q = val('citySearchInp'); S._flatCache = null; S.sort = 'none';
+        setMode(q ? 'citySearch' : 'all', q ? { query: q } : {}); loadPage(0);
+      }, 420);
+    }
+
+    async function populateDropdowns() {
+      try {
+        const data = await apiFetch(`/vendorBranches?page=0&size=500`);
+        const rows = extractRows(data).map(flatten);
+        const u = key => [...new Set(rows.map(r => r[key]).filter(Boolean))].sort();
+        fillSelect('cityFilter', u('_city'), 'All Cities');
+        fillSelect('stateFilter', u('_state'), 'All States');
+        fillSelect('countryFilter', u('_country'), 'All Countries');
+      } catch(e) { console.warn('Dropdown population failed:', e); }
+    }
+
+    function fillSelect(id, items, placeholder) {
+      const sel = document.getElementById(id); if (!sel || sel.tagName !== 'SELECT') return;
+      sel.innerHTML = `<option value="">${placeholder}</option>` +
+        items.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+    }
+
+    function openModal(id)  { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    async function openUpdate(rowIndex) {
+      const r = S.currentRows[rowIndex];
+      if (!r) return;
+      const branchId = getId(r);
+
+      document.getElementById('updateBranchId').value  = branchId;
+      document.getElementById('updateAddressId').value = r._addressId || '';
+      document.getElementById('updateQty').value       = getQty(r) ?? 0;
+      document.getElementById('updateStreet').value    = r._street  || '';
+      document.getElementById('updateCity').value      = r._city    || '';
+      document.getElementById('updateState').value     = r._state   || '';
+      document.getElementById('updatePostal').value    = r._postal  || '';
+      document.getElementById('updateCountry').value   = r._country || '';
+
+      openModal('updateModal');
+
+      /* Resolve addressId from association link if not already cached */
+      if (!r._addressId) {
+        try {
+          const addrData   = await apiFetch(`/vendorBranches/${branchId}/address`);
+          const resolvedId = addrData?.addressId ?? addrData?.id ?? null;
+          if (resolvedId) {
+            document.getElementById('updateAddressId').value = resolvedId;
+            r._addressId = resolvedId;
+          }
+        } catch(e) { console.warn('Could not resolve addressId:', e); }
+      }
+    }
+
+    async function submitUpdate() {
+      const branchId  = document.getElementById('updateBranchId').value;
+      const addressId = document.getElementById('updateAddressId').value;
+      if (!branchId) { showToast('Branch ID missing.', true); return; }
+
+      const qty = parseFloat(document.getElementById('updateQty').value);
+      if (isNaN(qty) || qty < 0) { showToast('Enter a valid quantity.', true); return; }
+
+      const addrPayload = {
+        street:     document.getElementById('updateStreet').value.trim(),
+        city:       document.getElementById('updateCity').value.trim(),
+        state:      document.getElementById('updateState').value.trim(),
+        postalCode: document.getElementById('updatePostal').value.trim(),
+        country:    document.getElementById('updateCountry').value.trim(),
+      };
+
+      if (Object.values(addrPayload).some(v => !v)) { showToast('All address fields are required.', true); return; }
+
+      let errors = [];
+
+      /* 1. PATCH branch quantity */
+      try {
+        const res = await fetch(`${API_BASE}/vendorBranches/${branchId}`, {
+          method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ quantity: qty }),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      } catch(e) { errors.push('quantity update failed'); console.error(e); }
+
+      /* 2. PATCH address via /addresses/{addressId} */
+      if (addressId) {
+        try {
+          const res = await fetch(`${API_BASE}/addresses/${addressId}`, {
+            method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(addrPayload),
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        } catch(e) { errors.push('address update failed'); console.error(e); }
+      } else {
+        errors.push('address ID not found — address not updated');
+      }
+
+      if (errors.length === 0) {
+        showToast('Branch updated successfully.');
+        closeModal('updateModal');
+        S._flatCache = null;
+        loadPage(S.page);
+      } else {
+        showToast('Some updates failed: ' + errors.join(', ') + '.', true);
+      }
+    }
+
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.className = 'toast show' + (isError ? ' error' : '');
+      clearTimeout(t._t); t._t = setTimeout(() => { t.className = 'toast'; }, 3400);
+    }
+
+    function showLoading() {
+      document.getElementById('branchTableBody').innerHTML =
+        `<tr><td colspan="9" class="table-loading"><span class="loader"></span>Loading branches&#8230;</td></tr>`;
+    }
+
+    document.addEventListener('click', e => {
+      if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('open');
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+      if (e.key === 'Enter') {
+        const id = document.activeElement?.id;
+        if (['cityFilter','stateFilter','countryFilter','postalFilter','citySearchInp'].includes(id)) applyFilters();
+      }
+    });
+
+    async function init() { showLoading(); await populateDropdowns(); await loadPage(0); }
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Branch Transactions — Digital Gold Wallet System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+          --gold:        #C9973F;
+          --gold-dim:    #a07830;
+          --gold-pale:   #e8c97a;
+          --gold-bright: #f0d98a;
+          --bg:          #13100a;
+          --surface:     #1a1710;
+          --card-bg:     #1d1a11;
+          --card-hover:  #232016;
+          --border:      #2a2418;
+          --border-dim:  #201d12;
+          --text:        #f0e8d6;
+          --text-sub:    #9a8f78;
+          --text-muted:  #655944;
+          --green:       #4caf7d;
+          --green-dim:   #2e6b4a;
+          --red:         #e8806a;
+          --red-dim:     #7a2e20;
+        }
+
+        body {
+          font-family: 'DM Sans', sans-serif;
+          background: var(--bg);
+          color: var(--text);
+          min-height: 100vh;
+          overflow-x: hidden;
+          font-size: 15px;
+          line-height: 1.5;
+        }
+
+        .bg-glow {
+          position: fixed;
+          inset: 0; z-index: 0;
+          pointer-events: none;
+          background:
+            radial-gradient(ellipse 55% 35% at 50% 0%,   rgba(201,151,63,0.08) 0%, transparent 60%),
+            radial-gradient(ellipse 30% 25% at 0%   80%,  rgba(201,151,63,0.04) 0%, transparent 55%),
+            radial-gradient(ellipse 30% 25% at 100% 70%,  rgba(201,151,63,0.04) 0%, transparent 55%);
+        }
+
+        .page-wrap {
+          position: relative; z-index: 1;
+          max-width: 1160px;
+          margin: 0 auto;
+          padding: 40px 32px 80px;
+        }
+
+        /* TOP NAV */
+        .top-nav {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 40px;
+          padding-bottom: 20px;
+          border-bottom: 1px solid var(--border-dim);
+        }
+        .back-link {
+          display: inline-flex;
+          align-items: center;
+          gap: 7px;
+          font-size: 0.88rem;
+          font-weight: 500;
+          color: var(--text-muted);
+          text-decoration: none;
+          letter-spacing: 0.04em;
+          transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--gold); }
+        .back-link svg { width: 14px; height: 14px; flex-shrink: 0; }
+        .nav-brand {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 0.9rem;
+          font-weight: 300;
+          color: var(--text-muted);
+          letter-spacing: 0.14em;
+        }
+
+        /* PAGE HEADER */
+        .page-header { margin-bottom: 36px; }
+        .page-header h1 {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+          font-weight: 300;
+          color: var(--text);
+          letter-spacing: 0.01em;
+          line-height: 1.1;
+          margin-bottom: 8px;
+        }
+        .page-header h1 em { font-style: italic; color: var(--gold-pale); }
+        .page-sub {
+          font-size: 0.95rem;
+          color: var(--text-sub);
+          font-weight: 300;
+        }
+
+        /* SUMMARY STRIP */
+        .summary-strip {
+          display: flex;
+          align-items: stretch;
+          background: var(--card-bg);
+          border: 1px solid var(--border);
+          border-radius: 14px;
+          margin-bottom: 16px;
+          overflow: hidden;
+        }
+        .summary-item { flex: 1; padding: 24px 30px; min-width: 0; }
+        .summary-divider { width: 1px; background: var(--border); flex-shrink: 0; align-self: stretch; }
+        .summary-label {
+          font-size: 11px; font-weight: 600;
+          letter-spacing: 0.2em; text-transform: uppercase;
+          color: var(--text-muted); margin-bottom: 8px;
+        }
+        .summary-value {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 2rem; font-weight: 400;
+          color: var(--text); line-height: 1;
+          white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .summary-value.gold  { color: var(--gold-pale); }
+        .summary-value.green { color: var(--green); }
+
+        /* FILTER BAR */
+        .filter-bar {
+          background: var(--card-bg);
+          border: 1px solid var(--border);
+          border-radius: 14px;
+          padding: 20px 24px 22px;
+          margin-bottom: 16px;
+        }
+        .filter-bar-label {
+          font-size: 10px; font-weight: 600;
+          letter-spacing: 0.22em; text-transform: uppercase;
+          color: var(--gold-dim); margin-bottom: 14px;
+        }
+        .filter-row { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+        .filter-group { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 130px; }
+        .filter-label {
+          font-size: 11px; font-weight: 600;
+          letter-spacing: 0.14em; text-transform: uppercase;
+          color: var(--text-muted);
+        }
+        .filter-select {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          padding: 10px 32px 10px 12px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.9rem; color: var(--text);
+          outline: none; cursor: pointer; appearance: none;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23a07830'/%3E%3C/svg%3E");
+          background-repeat: no-repeat;
+          background-position: right 11px center;
+          transition: border-color 0.2s;
+        }
+        .filter-select:focus { border-color: var(--gold-dim); }
+        .filter-select option { background: #1d1a11; color: var(--text); }
+        .reset-btn {
+          background: transparent;
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          padding: 10px 22px;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 0.87rem; font-weight: 500;
+          letter-spacing: 0.05em; color: var(--text-muted);
+          cursor: pointer; white-space: nowrap; align-self: flex-end;
+          transition: border-color 0.2s, color 0.2s;
+        }
+        .reset-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+
+        /* TABLE CARD */
+        .table-card {
+          background: var(--card-bg);
+          border: 1px solid var(--border);
+          border-radius: 14px;
+          overflow: hidden;
+        }
+        .table-scroll {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+        }
+        .table-scroll::-webkit-scrollbar { height: 4px; }
+        .table-scroll::-webkit-scrollbar-track { background: var(--surface); }
+        .table-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+        .table-scroll::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+        .txn-table {
+          width: 100%;
+          border-collapse: collapse;
+          min-width: 820px;
+        }
+        .txn-table thead {
+          background: var(--surface);
+          border-bottom: 1px solid var(--border);
+        }
+        .txn-table th {
+          padding: 13px 16px;
+          font-size: 11px; font-weight: 600;
+          letter-spacing: 0.16em; text-transform: uppercase;
+          color: var(--text-muted); text-align: left; white-space: nowrap;
+        }
+        .txn-table th:first-child { padding-left: 22px; }
+        .txn-table th:last-child  { padding-right: 22px; }
+
+        .txn-table tbody tr {
+          border-bottom: 1px solid var(--border-dim);
+          transition: background 0.15s;
+          animation: rowIn 0.25s ease both;
+        }
+        .txn-table tbody tr:last-child { border-bottom: none; }
+        .txn-table tbody tr:hover { background: var(--card-hover); }
+
+        .txn-table td {
+          padding: 14px 16px;
+          vertical-align: middle;
+          font-size: 0.9rem;
+          color: var(--text-sub);
+        }
+        .txn-table td:first-child { padding-left: 22px; }
+        .txn-table td:last-child  { padding-right: 22px; }
+
+        /* cell variants */
+        .td-id {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 1.1rem; font-weight: 500;
+          color: var(--gold-dim) !important;
+        }
+        .td-user {
+          font-size: 0.94rem; font-weight: 600;
+          color: var(--text) !important;
+        }
+        .td-qty {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 1.15rem;
+          color: var(--gold-pale) !important;
+          white-space: nowrap;
+        }
+        .td-amount {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 1.1rem;
+          color: var(--text) !important;
+          white-space: nowrap;
+        }
+        .td-date {
+          font-size: 0.84rem;
+          color: var(--text-muted) !important;
+          white-space: nowrap;
+        }
+
+        /* type badge */
+        .type-badge {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          padding: 4px 10px;
+          border-radius: 20px;
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          white-space: nowrap;
+        }
+        .type-badge.buy {
+          background: rgba(201,151,63,0.1);
+          border: 1px solid rgba(201,151,63,0.25);
+          color: var(--gold-pale);
+        }
+        .type-badge.sell {
+          background: rgba(76,175,125,0.1);
+          border: 1px solid rgba(76,175,125,0.25);
+          color: var(--green);
+        }
+        .type-badge.convert {
+          background: rgba(120,100,200,0.1);
+          border: 1px solid rgba(120,100,200,0.25);
+          color: #b8a8e8;
+        }
+        .type-badge.transfer {
+          background: rgba(100,160,220,0.1);
+          border: 1px solid rgba(100,160,220,0.25);
+          color: #8ab8e0;
+        }
+        .type-badge.other {
+          background: rgba(160,143,120,0.1);
+          border: 1px solid rgba(160,143,120,0.2);
+          color: var(--text-sub);
+        }
+
+        /* status badge */
+        .status-badge {
+          display: inline-block;
+          padding: 3px 9px;
+          border-radius: 20px;
+          font-size: 11px;
+          font-weight: 600;
+          letter-spacing: 0.07em;
+        }
+        .status-badge.success {
+          background: rgba(76,175,125,0.12);
+          border: 1px solid rgba(76,175,125,0.3);
+          color: var(--green);
+        }
+        .status-badge.failed {
+          background: rgba(232,128,106,0.12);
+          border: 1px solid rgba(232,128,106,0.3);
+          color: var(--red);
+        }
+        .status-badge.pending {
+          background: rgba(201,151,63,0.1);
+          border: 1px solid rgba(201,151,63,0.25);
+          color: var(--gold);
+        }
+
+        /* table footer */
+        .table-footer {
+          padding: 12px 22px;
+          border-top: 1px solid var(--border-dim);
+          background: var(--surface);
+          display: flex;
+          justify-content: flex-end;
+        }
+        .count-badge {
+          font-size: 11px; font-weight: 600;
+          letter-spacing: 0.14em; text-transform: uppercase;
+          color: var(--gold-dim);
+        }
+
+        /* empty / loading states */
+        .state-cell {
+          text-align: center !important;
+          padding: 56px 24px !important;
+          color: var(--text-muted) !important;
+          font-size: 0.92rem !important;
+        }
+        .loader {
+          display: inline-block;
+          width: 20px; height: 20px;
+          border: 2px solid var(--border);
+          border-top-color: var(--gold);
+          border-radius: 50%;
+          animation: spin 0.75s linear infinite;
+          vertical-align: middle;
+          margin-right: 10px;
+        }
+
+        /* TOAST */
+        .toast {
+          position: fixed;
+          bottom: 24px; right: 24px;
+          z-index: 300;
+          background: #1e1a10;
+          border: 1px solid var(--gold-dim);
+          border-radius: 10px;
+          padding: 13px 20px;
+          font-size: 0.88rem; font-weight: 500;
+          color: var(--gold-pale);
+          opacity: 0; pointer-events: none;
+          transition: opacity 0.3s, transform 0.3s;
+          transform: translateY(10px);
+          max-width: 340px; line-height: 1.5;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.error { border-color: var(--red-dim); color: var(--red); background: #180a08; }
+
+        /* FOOTER */
+        footer {
+          position: relative; z-index: 1;
+          text-align: center;
+          padding: 28px 24px;
+          border-top: 1px solid var(--border-dim);
+          margin-top: 40px;
+        }
+        .footer-inner { display: inline-flex; align-items: center; gap: 14px; }
+        .footer-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--gold); opacity: 0.35; }
+        .footer-text {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: 0.88rem; color: var(--text-muted);
+          letter-spacing: 0.13em; font-weight: 300;
+        }
+
+        @keyframes spin    { to { transform: rotate(360deg); } }
+        @keyframes rowIn   { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) {
+          .page-wrap { padding: 24px 16px 60px; }
+          .summary-strip { flex-direction: column; }
+          .summary-divider { width: 100%; height: 1px; }
+          .summary-item { padding: 18px 22px; }
+          .summary-value { font-size: 1.7rem; }
+          .top-nav { margin-bottom: 28px; }
+          .nav-brand { display: none; }
+        }
+        @media (max-width: 560px) {
+          .filter-group { min-width: 100%; }
+          .reset-btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="page-wrap">
+
+    <!-- TOP NAV -->
+    <div class="top-nav">
+        <a class="back-link" id="backLink" href="Member3Page1.html">
+            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Back to Branches
+        </a>
+        <div class="nav-brand">Digital Gold Wallet System</div>
+    </div>
+
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <h1>Branch <em>Transactions</em></h1>
+        <p class="page-sub" id="pageSubtitle">Loading transaction history…</p>
+    </div>
+
+    <!-- SUMMARY STRIP -->
+    <div class="summary-strip">
+        <div class="summary-item">
+            <div class="summary-label">Branch ID</div>
+            <div class="summary-value gold" id="summaryBranchId">—</div>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+            <div class="summary-label">Total Transactions</div>
+            <div class="summary-value gold" id="summaryTxnCount">—</div>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+            <div class="summary-label">Total Gold Traded (g)</div>
+            <div class="summary-value gold" id="summaryTotalQty">— g</div>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+            <div class="summary-label">Total Amount (₹)</div>
+            <div class="summary-value green" id="summaryTotalAmount">—</div>
+        </div>
+    </div>
+
+    <!-- FILTER BAR -->
+    <div class="filter-bar">
+        <div class="filter-bar-label">Filter Transactions</div>
+        <div class="filter-row">
+            <div class="filter-group">
+                <label class="filter-label">Transaction Type</label>
+                <select class="filter-select" id="typeFilter" onchange="applyFilters()">
+                    <option value="">All Types</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Status</label>
+                <select class="filter-select" id="statusFilter" onchange="applyFilters()">
+                    <option value="">All Statuses</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">User</label>
+                <select class="filter-select" id="userFilter" onchange="applyFilters()">
+                    <option value="">All Users</option>
+                </select>
+            </div>
+            <button class="reset-btn" onclick="resetFilters()">Reset Filters</button>
+        </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-card">
+        <div class="table-scroll">
+            <table class="txn-table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>User</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Gold Qty (g)</th>
+                    <th>Amount (₹)</th>
+                    <th>Date</th>
+                </tr>
+                </thead>
+                <tbody id="txnTableBody">
+                <tr>
+                    <td colspan="7" class="state-cell">
+                        <span class="loader"></span>Loading transactions…
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="table-footer">
+            <span class="count-badge" id="countBadge">— transactions</span>
+        </div>
+    </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- FOOTER -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-dot"></div>
+        <div class="footer-text">Digital Gold Wallet System</div>
+        <div class="footer-dot"></div>
+    </div>
+</footer>
+
+<script>
+    const API_BASE = 'http://localhost:8080';
+    let allRows      = [];
+    let filteredRows = [];
+
+    /* ── helpers ── */
+    const fmtQty    = q  => parseFloat(q || 0).toFixed(2);
+    const fmtAmount = a  => parseFloat(a || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtDate   = dt => dt ? new Date(dt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) + ' ' +
+                                  new Date(dt).toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' }) : 'NULL';
+
+    /* ── get branch ID from URL ── */
+    function getBranchId() {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('id') || '1';
+    }
+
+    /* ── toast ── */
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast show' + (isError ? ' error' : '');
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => { t.className = 'toast'; }, 3200);
+    }
+
+    /* ── fetch ── */
+    async function fetchTransactions(branchId) {
+      const res = await fetch(`${API_BASE}/vendorBranches/${branchId}/transactions?projection=transactionHistoryView`);
+      if (!res.ok) throw new Error('API failed');
+      const data = await res.json();
+      return data._embedded?.transactionHistories || [];
+    }
+
+    /* ── type badge ── */
+    function typeBadge(type) {
+      if (!type) return `<span class="type-badge other">—</span>`;
+      const t = type.toUpperCase();
+      let cls = 'other', label = type;
+      if (t === 'BUY')                cls = 'buy',     label = '↓ Buy';
+      else if (t === 'SELL')          cls = 'sell',    label = '↑ Sell';
+      else if (t.includes('CONVERT')) cls = 'convert', label = '⇄ Convert';
+      else if (t.includes('TRANSFER'))cls = 'transfer',label = '→ Transfer';
+      return `<span class="type-badge ${cls}">${label}</span>`;
+    }
+
+    /* ── status badge ── */
+    function statusBadge(status) {
+      if (!status) return `<span class="status-badge pending">—</span>`;
+      const s = status.toUpperCase();
+      let cls = 'pending';
+      if (s === 'SUCCESS') cls = 'success';
+      else if (s === 'FAILED' || s === 'FAILURE') cls = 'failed';
+      return `<span class="status-badge ${cls}">${status}</span>`;
+    }
+
+    /* ── render ── */
+    function renderTable(rows) {
+      const tbody = document.getElementById('txnTableBody');
+      if (!rows.length) {
+        tbody.innerHTML = `<tr><td colspan="7" class="state-cell">No transactions found matching your filters.</td></tr>`;
+        updateCount(0);
+        return;
+      }
+
+      tbody.innerHTML = rows.map((r, i) => `
+        <tr style="animation-delay:${i * 0.04}s">
+          <td class="td-id">${String(i + 1).padStart(2, '0')}</td>
+          <td class="td-user">${r.user?.name || '—'}</td>
+          <td>${typeBadge(r.transactionType)}</td>
+          <td>${statusBadge(r.transactionStatus)}</td>
+          <td class="td-qty">${fmtQty(r.quantity)} g</td>
+          <td class="td-amount">₹${fmtAmount(r.amount)}</td>
+          <td class="td-date">${fmtDate(r.createdAt)}</td>
+        </tr>
+      `).join('');
+      updateCount(rows.length);
+    }
+
+    /* ── summary ── */
+    function updateSummary(rows, branchId) {
+      const totalQty    = rows.reduce((s, r) => s + (parseFloat(r.quantity) || 0), 0);
+      const totalAmount = rows.reduce((s, r) => s + (parseFloat(r.amount) || 0), 0);
+      document.getElementById('summaryBranchId').textContent    = `#${branchId}`;
+      document.getElementById('summaryTxnCount').textContent    = rows.length;
+      document.getElementById('summaryTotalQty').textContent    = `${fmtQty(totalQty)} g`;
+      document.getElementById('summaryTotalAmount').textContent = `₹${fmtAmount(totalAmount)}`;
+    }
+
+    function updateCount(n) {
+      document.getElementById('countBadge').textContent = `${n} ${n === 1 ? 'transaction' : 'transactions'}`;
+    }
+
+    /* ── filters ── */
+    function populateFilters() {
+      const types    = new Set();
+      const statuses = new Set();
+      const users    = new Set();
+      allRows.forEach(r => {
+        if (r.transactionType)   types.add(r.transactionType);
+        if (r.transactionStatus) statuses.add(r.transactionStatus);
+        if (r.user?.name)        users.add(r.user.name);
+      });
+      fillSelect('typeFilter',   [...types].sort());
+      fillSelect('statusFilter', [...statuses].sort());
+      fillSelect('userFilter',   [...users].sort());
+    }
+
+    function fillSelect(id, values) {
+      const sel = document.getElementById(id);
+      values.forEach(v => {
+        const o = document.createElement('option');
+        o.value = o.textContent = v;
+        sel.appendChild(o);
+      });
+    }
+
+    function applyFilters() {
+      const type   = document.getElementById('typeFilter').value;
+      const status = document.getElementById('statusFilter').value;
+      const user   = document.getElementById('userFilter').value;
+
+      filteredRows = allRows.filter(r =>
+        (!type   || r.transactionType   === type)   &&
+        (!status || r.transactionStatus === status) &&
+        (!user   || r.user?.name        === user)
+      );
+      renderTable(filteredRows);
+    }
+
+    function resetFilters() {
+      ['typeFilter','statusFilter','userFilter'].forEach(id => document.getElementById(id).value = '');
+      filteredRows = [...allRows];
+      renderTable(filteredRows);
+    }
+
+    /* ── init ── */
+    async function init() {
+      const branchId = getBranchId();
+      document.getElementById('summaryBranchId').textContent = `#${branchId}`;
+      document.getElementById('pageSubtitle').textContent    = `Transaction history for Branch #${branchId}`;
+
+      document.getElementById('txnTableBody').innerHTML =
+        `<tr><td colspan="7" class="state-cell"><span class="loader"></span>Loading transactions…</td></tr>`;
+
+      try {
+        allRows      = await fetchTransactions(branchId);
+        filteredRows = [...allRows];
+        populateFilters();
+        renderTable(filteredRows);
+        updateSummary(allRows, branchId);
+      } catch (err) {
+        console.error(err);
+        document.getElementById('txnTableBody').innerHTML =
+          `<tr><td colspan="7" class="state-cell">Failed to load data. Make sure the backend is running on port 8080.</td></tr>`;
+        showToast('Failed to load transaction data.', true);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
