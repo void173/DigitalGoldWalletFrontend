@@ -5,617 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Vendor Branches — Digital Gold Wallet System</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
-    <style>
-        /* ═══════════════════════════════════════════
-           RESET & ROOT
-        ═══════════════════════════════════════════ */
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-        :root {
-          --gold:        #C9973F;
-          --gold-dim:    #a07830;
-          --gold-pale:   #e8c97a;
-          --gold-bright: #f0d98a;
-          --bg:          #13100a;
-          --surface:     #1a1710;
-          --card-bg:     #1d1a11;
-          --card-hover:  #232016;
-          --border:      #2a2418;
-          --border-dim:  #201d12;
-          --text:        #f0e8d6;
-          --text-sub:    #9a8f78;
-          --text-muted:  #655944;
-        }
-
-        body {
-          font-family: 'DM Sans', sans-serif;
-          background: var(--bg);
-          color: var(--text);
-          min-height: 100vh;
-          overflow-x: hidden;
-          font-size: 15px;
-          line-height: 1.5;
-        }
-
-        /* ═══════════════════════════════════════════
-           BACKGROUND
-        ═══════════════════════════════════════════ */
-        .bg-glow {
-          position: fixed;
-          inset: 0; z-index: 0;
-          pointer-events: none;
-          background:
-            radial-gradient(ellipse 55% 35% at 50% 0%,   rgba(201,151,63,0.08) 0%, transparent 60%),
-            radial-gradient(ellipse 30% 25% at 0%   80%,  rgba(201,151,63,0.04) 0%, transparent 55%),
-            radial-gradient(ellipse 30% 25% at 100% 70%,  rgba(201,151,63,0.04) 0%, transparent 55%);
-        }
-
-        /* ═══════════════════════════════════════════
-           PAGE SHELL
-        ═══════════════════════════════════════════ */
-        .page-wrap {
-          position: relative; z-index: 1;
-          max-width: 1160px;
-          margin: 0 auto;
-          padding: 40px 32px 80px;
-        }
-
-        /* ═══════════════════════════════════════════
-           TOP NAV BAR
-        ═══════════════════════════════════════════ */
-        .top-nav {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          margin-bottom: 40px;
-          padding-bottom: 20px;
-          border-bottom: 1px solid var(--border-dim);
-        }
-        .back-link {
-          display: inline-flex;
-          align-items: center;
-          gap: 7px;
-          font-size: 0.88rem;
-          font-weight: 500;
-          color: var(--text-muted);
-          text-decoration: none;
-          letter-spacing: 0.04em;
-          transition: color 0.2s;
-        }
-        .back-link:hover { color: var(--gold); }
-        .back-link svg { width: 14px; height: 14px; flex-shrink: 0; }
-
-        .nav-brand {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 0.9rem;
-          font-weight: 300;
-          color: var(--text-muted);
-          letter-spacing: 0.14em;
-        }
-
-        /* ═══════════════════════════════════════════
-           PAGE HEADER
-        ═══════════════════════════════════════════ */
-        .page-header {
-          margin-bottom: 36px;
-        }
-        .page-header h1 {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: clamp(2.2rem, 4.5vw, 3.4rem);
-          font-weight: 300;
-          color: var(--text);
-          letter-spacing: 0.01em;
-          line-height: 1.1;
-          margin-bottom: 8px;
-        }
-        .page-header h1 em { font-style: italic; color: var(--gold-pale); }
-        .page-sub {
-          font-size: 0.95rem;
-          color: var(--text-sub);
-          font-weight: 300;
-        }
-
-        /* ═══════════════════════════════════════════
-           SUMMARY STRIP
-        ═══════════════════════════════════════════ */
-        .summary-strip {
-          display: flex;
-          align-items: stretch;
-          background: var(--card-bg);
-          border: 1px solid var(--border);
-          border-radius: 14px;
-          margin-bottom: 16px;
-          overflow: hidden;
-        }
-        .summary-item {
-          flex: 1;
-          padding: 24px 30px;
-          min-width: 0;
-        }
-        .summary-divider {
-          width: 1px;
-          background: var(--border);
-          flex-shrink: 0;
-          align-self: stretch;
-        }
-        .summary-label {
-          font-size: 11px;
-          font-weight: 600;
-          letter-spacing: 0.2em;
-          text-transform: uppercase;
-          color: var(--text-muted);
-          margin-bottom: 8px;
-        }
-        .summary-value {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 2rem;
-          font-weight: 400;
-          color: var(--text);
-          line-height: 1;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .summary-value.gold { color: var(--gold-pale); }
-
-        /* ═══════════════════════════════════════════
-           FILTER BAR
-        ═══════════════════════════════════════════ */
-        .filter-bar {
-          background: var(--card-bg);
-          border: 1px solid var(--border);
-          border-radius: 14px;
-          padding: 20px 24px 22px;
-          margin-bottom: 16px;
-        }
-        .filter-bar-label {
-          font-size: 10px;
-          font-weight: 600;
-          letter-spacing: 0.22em;
-          text-transform: uppercase;
-          color: var(--gold-dim);
-          margin-bottom: 14px;
-        }
-        .filter-row {
-          display: flex;
-          align-items: flex-end;
-          gap: 12px;
-          flex-wrap: wrap;
-        }
-        .filter-group {
-          display: flex;
-          flex-direction: column;
-          gap: 6px;
-          flex: 1;
-          min-width: 130px;
-        }
-        .filter-label {
-          font-size: 11px;
-          font-weight: 600;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          color: var(--text-muted);
-        }
-        .filter-select {
-          background: var(--surface);
-          border: 1px solid var(--border);
-          border-radius: 8px;
-          padding: 10px 32px 10px 12px;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 0.9rem;
-          color: var(--text);
-          outline: none;
-          cursor: pointer;
-          appearance: none;
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23a07830'/%3E%3C/svg%3E");
-          background-repeat: no-repeat;
-          background-position: right 11px center;
-          transition: border-color 0.2s;
-        }
-        .filter-select:focus { border-color: var(--gold-dim); }
-        .filter-select option { background: #1d1a11; color: var(--text); }
-
-        .reset-btn {
-          background: transparent;
-          border: 1px solid var(--border);
-          border-radius: 8px;
-          padding: 10px 22px;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 0.87rem;
-          font-weight: 500;
-          letter-spacing: 0.05em;
-          color: var(--text-muted);
-          cursor: pointer;
-          white-space: nowrap;
-          align-self: flex-end;
-          transition: border-color 0.2s, color 0.2s;
-        }
-        .reset-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
-
-        /* ═══════════════════════════════════════════
-           TABLE CARD
-        ═══════════════════════════════════════════ */
-        .table-card {
-          background: var(--card-bg);
-          border: 1px solid var(--border);
-          border-radius: 14px;
-          overflow: hidden;
-        }
-
-        .table-scroll {
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-        }
-
-        /* scrollbar styling */
-        .table-scroll::-webkit-scrollbar { height: 4px; }
-        .table-scroll::-webkit-scrollbar-track { background: var(--surface); }
-        .table-scroll::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-        .table-scroll::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
-
-        .branch-table {
-          width: 100%;
-          border-collapse: collapse;
-          min-width: 860px;
-        }
-
-        /* HEAD */
-        .branch-table thead {
-          background: var(--surface);
-          border-bottom: 1px solid var(--border);
-        }
-        .branch-table th {
-          padding: 13px 16px;
-          font-size: 11px;
-          font-weight: 600;
-          letter-spacing: 0.16em;
-          text-transform: uppercase;
-          color: var(--text-muted);
-          text-align: left;
-          white-space: nowrap;
-        }
-        .branch-table th:first-child { padding-left: 22px; }
-        .branch-table th:last-child  { padding-right: 22px; text-align: center; }
-
-        /* BODY */
-        .branch-table tbody tr {
-          border-bottom: 1px solid var(--border-dim);
-          transition: background 0.15s;
-        }
-        .branch-table tbody tr:last-child { border-bottom: none; }
-        .branch-table tbody tr:hover { background: var(--card-hover); }
-
-        .branch-table td {
-          padding: 14px 16px;
-          vertical-align: middle;
-          font-size: 0.9rem;
-          color: var(--text-sub);
-        }
-        .branch-table td:first-child { padding-left: 22px; }
-        .branch-table td:last-child  { padding-right: 22px; }
-
-        /* cell variants */
-        .td-id {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 1.1rem;
-          font-weight: 500;
-          color: var(--gold-dim) !important;
-        }
-        .td-city {
-          font-size: 0.94rem;
-          font-weight: 600;
-          color: var(--text) !important;
-        }
-        .branch-link {
-          color: var(--text);
-          text-decoration: none;
-          border-bottom: 1px solid transparent;
-          transition: color 0.2s, border-color 0.2s;
-        }
-        .branch-link:hover {
-          color: var(--gold-pale);
-          border-bottom-color: var(--gold-dim);
-        }
-        .td-state, .td-country {
-          font-size: 0.9rem;
-          color: var(--text-sub) !important;
-        }
-        .td-address {
-          font-size: 0.86rem;
-          color: var(--text-muted) !important;
-          max-width: 200px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-        .td-qty {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 1.15rem;
-          color: var(--gold-pale) !important;
-          white-space: nowrap;
-        }
-        .td-date {
-          font-size: 0.84rem;
-          color: var(--text-muted) !important;
-          white-space: nowrap;
-        }
-        .td-actions {
-          text-align: center;
-          white-space: nowrap;
-        }
-
-        /* action buttons */
-        .actions-wrap {
-          display: inline-flex;
-          gap: 6px;
-          align-items: center;
-        }
-        .action-btn {
-          display: inline-flex;
-          align-items: center;
-          gap: 4px;
-          padding: 7px 13px;
-          border-radius: 7px;
-          border: 1px solid;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 12px;
-          font-weight: 500;
-          cursor: pointer;
-          transition: background 0.2s, border-color 0.2s, color 0.2s;
-          letter-spacing: 0.02em;
-          white-space: nowrap;
-        }
-        .btn-edit {
-          background: var(--surface);
-          border-color: var(--border);
-          color: var(--text-sub);
-        }
-        .btn-edit:hover {
-          background: #252016;
-          border-color: var(--gold-dim);
-          color: var(--gold);
-        }
-
-        /* table footer */
-        .table-footer {
-          padding: 12px 22px;
-          border-top: 1px solid var(--border-dim);
-          background: var(--surface);
-          display: flex;
-          justify-content: flex-end;
-        }
-        .count-badge {
-          font-size: 11px;
-          font-weight: 600;
-          letter-spacing: 0.14em;
-          text-transform: uppercase;
-          color: var(--gold-dim);
-        }
-
-        /* empty / loading states */
-        .state-cell {
-          text-align: center !important;
-          padding: 56px 24px !important;
-          color: var(--text-muted) !important;
-          font-size: 0.92rem !important;
-        }
-        .loader {
-          display: inline-block;
-          width: 20px; height: 20px;
-          border: 2px solid var(--border);
-          border-top-color: var(--gold);
-          border-radius: 50%;
-          animation: spin 0.75s linear infinite;
-          vertical-align: middle;
-          margin-right: 10px;
-        }
-
-        /* ═══════════════════════════════════════════
-           MODALS
-        ═══════════════════════════════════════════ */
-        .modal-overlay {
-          display: none;
-          position: fixed;
-          inset: 0; z-index: 200;
-          background: rgba(5, 4, 2, 0.82);
-          align-items: center;
-          justify-content: center;
-          backdrop-filter: blur(6px);
-          padding: 20px;
-        }
-        .modal-overlay.open { display: flex; }
-
-        .modal {
-          background: #18150d;
-          border: 1px solid #302818;
-          border-radius: 16px;
-          width: 100%;
-          max-width: 540px;
-          overflow: hidden;
-          animation: modalIn 0.2s ease;
-          box-shadow: 0 24px 80px rgba(0,0,0,0.7);
-        }
-
-        .modal-header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 22px 26px 18px;
-          border-bottom: 1px solid var(--border);
-        }
-        .modal-title {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 1.55rem;
-          font-weight: 400;
-          color: var(--text);
-        }
-        .modal-close {
-          background: none; border: none;
-          color: var(--text-muted);
-          font-size: 18px;
-          cursor: pointer;
-          padding: 4px 8px;
-          border-radius: 6px;
-          line-height: 1;
-          transition: color 0.2s, background 0.2s;
-        }
-        .modal-close:hover { color: var(--text); background: var(--surface); }
-
-        .modal-body { padding: 24px 26px; }
-
-        .form-row {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 14px;
-          margin-bottom: 14px;
-        }
-        .form-row:last-of-type { margin-bottom: 0; }
-        .form-group { display: flex; flex-direction: column; gap: 6px; }
-        .form-label {
-          font-size: 11px; font-weight: 600;
-          letter-spacing: 0.16em; text-transform: uppercase;
-          color: var(--text-muted);
-        }
-        .form-input {
-          background: var(--surface);
-          border: 1px solid var(--border);
-          border-radius: 8px;
-          padding: 10px 13px;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 0.9rem;
-          color: var(--text);
-          outline: none;
-          width: 100%;
-          transition: border-color 0.2s;
-        }
-        .form-input::placeholder { color: #38321e; }
-        .form-input:focus { border-color: var(--gold-dim); }
-        .form-input option { background: #18150d; color: var(--text); }
-
-        .modal-footer {
-          display: flex;
-          justify-content: flex-end;
-          gap: 10px;
-          padding: 16px 26px;
-          border-top: 1px solid var(--border);
-          background: var(--surface);
-        }
-        .btn-cancel {
-          background: transparent;
-          border: 1px solid var(--border);
-          border-radius: 8px;
-          padding: 10px 22px;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 0.87rem;
-          font-weight: 500;
-          color: var(--text-muted);
-          cursor: pointer;
-          transition: border-color 0.2s, color 0.2s;
-        }
-        .btn-cancel:hover { border-color: var(--text-muted); color: var(--text); }
-
-        .btn-confirm {
-          background: rgba(201,151,63,0.1);
-          border: 1px solid var(--gold-dim);
-          border-radius: 8px;
-          padding: 10px 24px;
-          font-family: 'DM Sans', sans-serif;
-          font-size: 0.87rem;
-          font-weight: 600;
-          color: var(--gold);
-          cursor: pointer;
-          transition: background 0.2s, border-color 0.2s;
-          letter-spacing: 0.03em;
-        }
-        .btn-confirm:hover { background: rgba(201,151,63,0.2); border-color: var(--gold); }
-
-
-        /* ═══════════════════════════════════════════
-           TOAST
-        ═══════════════════════════════════════════ */
-        .toast {
-          position: fixed;
-          bottom: 24px; right: 24px;
-          z-index: 300;
-          background: #1e1a10;
-          border: 1px solid var(--gold-dim);
-          border-radius: 10px;
-          padding: 13px 20px;
-          font-size: 0.88rem;
-          font-weight: 500;
-          color: var(--gold-pale);
-          opacity: 0; pointer-events: none;
-          transition: opacity 0.3s, transform 0.3s;
-          transform: translateY(10px);
-          max-width: 340px;
-          line-height: 1.5;
-        }
-        .toast.show { opacity: 1; transform: translateY(0); }
-        .toast.error { border-color: #7a2e20; color: #e8806a; background: #180a08; }
-
-        /* ═══════════════════════════════════════════
-           FOOTER
-        ═══════════════════════════════════════════ */
-        footer {
-          position: relative; z-index: 1;
-          text-align: center;
-          padding: 28px 24px;
-          border-top: 1px solid var(--border-dim);
-          margin-top: 40px;
-        }
-        .footer-inner { display: inline-flex; align-items: center; gap: 14px; }
-        .footer-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--gold); opacity: 0.35; }
-        .footer-text {
-          font-family: 'Cormorant Garamond', serif;
-          font-size: 0.88rem;
-          color: var(--text-muted);
-          letter-spacing: 0.13em;
-          font-weight: 300;
-        }
-
-        /* ═══════════════════════════════════════════
-           ANIMATIONS
-        ═══════════════════════════════════════════ */
-        @keyframes spin    { to { transform: rotate(360deg); } }
-        @keyframes modalIn { from { opacity: 0; transform: scale(0.97) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
-        @keyframes rowIn   { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        .branch-table tbody tr { animation: rowIn 0.25s ease both; }
-
-        /* ═══════════════════════════════════════════
-           RESPONSIVE
-        ═══════════════════════════════════════════ */
-        @media (max-width: 768px) {
-          .page-wrap { padding: 24px 16px 60px; }
-
-          .summary-strip {
-            flex-direction: column;
-          }
-          .summary-divider { width: 100%; height: 1px; }
-          .summary-item { padding: 18px 22px; }
-          .summary-value { font-size: 1.7rem; }
-
-          .top-nav { margin-bottom: 28px; }
-          .nav-brand { display: none; }
-        }
-
-        @media (max-width: 560px) {
-          .form-row { grid-template-columns: 1fr; }
-          .filter-group { min-width: 100%; }
-          .reset-btn { width: 100%; justify-content: center; }
-        }
-    </style>
+    <link rel="stylesheet" href="../css/vendorBranchesAddressesStyle.css"/>
 </head>
 <body>
 
-<div class="bg-glow"></div>
+<div class="bg-mesh"></div>
 
 <div class="page-wrap">
 
-    <!-- TOP NAV -->
     <div class="top-nav">
         <a class="back-link" href="../index.html">
-            <svg viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <svg viewBox="0 0 14 14" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             Back to Home
@@ -623,17 +23,15 @@
         <div class="nav-brand">Digital Gold Wallet System</div>
     </div>
 
-    <!-- PAGE HEADER -->
     <div class="page-header">
         <h1>Vendor <em>Branches</em></h1>
         <p class="page-sub" id="pageSubtitle">Manage vendor branch locations and gold inventory</p>
     </div>
 
-    <!-- SUMMARY STRIP -->
-    <div class="summary-strip">
+    <div class="summary-card">
         <div class="summary-item">
-            <div class="summary-label">Vendor</div>
-            <div class="summary-value" id="summaryVendorName">All Vendors</div>
+            <div class="summary-label">Active Filter</div>
+            <div class="summary-value" id="summaryFilterLabel">All Branches</div>
         </div>
         <div class="summary-divider"></div>
         <div class="summary-item">
@@ -642,38 +40,60 @@
         </div>
         <div class="summary-divider"></div>
         <div class="summary-item">
-            <div class="summary-label">Total Gold Quantity</div>
-            <div class="summary-value gold" id="summaryTotalQty">— g</div>
+            <div class="summary-label">Total Gold (g)</div>
+            <div class="summary-value gold" id="summaryTotalQty">—</div>
         </div>
     </div>
 
-    <!-- FILTER BAR -->
-    <div class="filter-bar">
-        <div class="filter-bar-label">Filter Branches</div>
-        <div class="filter-row">
+    <div class="filter-card">
+        <div class="filter-title">Filter Branches</div>
+        <div class="filter-row" style="margin-bottom:14px;">
+            <div class="filter-group">
+                <label class="filter-label">City Search</label>
+                <input class="filter-select" type="text" id="citySearchInp" placeholder="Type to search…" oninput="debouncedSearch()"/>
+            </div>
             <div class="filter-group">
                 <label class="filter-label">City</label>
-                <select class="filter-select" id="cityFilter" onchange="applyFilters()">
-                    <option value="">All Cities</option>
-                </select>
+                <select class="filter-select" id="cityFilter"><option value="">All Cities</option></select>
             </div>
             <div class="filter-group">
                 <label class="filter-label">State</label>
-                <select class="filter-select" id="stateFilter" onchange="applyFilters()">
-                    <option value="">All States</option>
-                </select>
+                <select class="filter-select" id="stateFilter"><option value="">All States</option></select>
             </div>
             <div class="filter-group">
                 <label class="filter-label">Country</label>
-                <select class="filter-select" id="countryFilter" onchange="applyFilters()">
-                    <option value="">All Countries</option>
+                <select class="filter-select" id="countryFilter"><option value="">All Countries</option></select>
+            </div>
+            <div class="filter-group">
+                <label class="filter-label">Postal Code</label>
+                <input class="filter-select" type="text" id="postalFilter" placeholder="e.g. 411001"/>
+            </div>
+        </div>
+        <div class="filter-row">
+            <div class="filter-group" style="max-width:120px;">
+                <label class="filter-label">Qty Min</label>
+                <input class="filter-select" type="number" id="qtyMin" placeholder="0" min="0"/>
+            </div>
+            <div class="filter-group" style="max-width:120px;">
+                <label class="filter-label">Qty Max</label>
+                <input class="filter-select" type="number" id="qtyMax" placeholder="max" min="0"/>
+            </div>
+            <div class="filter-group" style="max-width:170px;">
+                <label class="filter-label">Sort Quantity</label>
+                <select class="filter-select" id="sortSelect">
+                    <option value="none">No Sort</option>
+                    <option value="asc">&#8593; Ascending</option>
+                    <option value="desc">&#8595; Descending</option>
                 </select>
             </div>
-            <button class="reset-btn" onclick="resetFilters()">Reset Filters</button>
+            <div style="display:flex;gap:8px;align-self:flex-end;flex-wrap:wrap;">
+                <button class="reset-btn apply-btn" onclick="applyFilters()">Apply</button>
+                <button class="reset-btn" onclick="applyQtyRange()">Filter Qty</button>
+                <button class="reset-btn" onclick="resetAll()">Reset All</button>
+            </div>
         </div>
     </div>
 
-    <!-- TABLE -->
     <div class="table-card">
         <div class="table-scroll">
             <table class="branch-table">
@@ -684,79 +104,98 @@
                     <th>State</th>
                     <th>Country</th>
                     <th>Address</th>
-                    <th>Gold Qty (g)</th>
-                    <th>Created At</th>
+                    <th>Postal</th>
+                    <th class="sortable-col" onclick="toggleColSort()" title="Click to sort by quantity">
+                        Gold Qty (g)&nbsp;<span id="qtySortArrow">&#8597;</span>
+                    </th>
+                    <th>Vendor Name</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody id="branchTableBody">
-                <tr>
-                    <td colspan="8" class="state-cell">
-                        <span class="loader"></span>Loading branches…
-                    </td>
-                </tr>
+                <tr><td colspan="9" class="table-loading"><span class="loader"></span>Loading branches&#8230;</td></tr>
                 </tbody>
             </table>
         </div>
+        <div class="pagination" id="paginationBar">
+            <div class="pg-info" id="pgInfo">&#8212;</div>
+            <div class="pg-controls" id="pgControls"></div>
+        </div>
         <div class="table-footer">
-            <span class="count-badge" id="countBadge">— branches</span>
+            <span class="count-badge" id="countBadge">&#8212; branches</span>
         </div>
     </div>
 
-</div><!-- /page-wrap -->
+</div>
 
-<!-- ══ UPDATE MODAL ══ -->
+<!-- UPDATE MODAL -->
 <div class="modal-overlay" id="updateModal">
     <div class="modal">
         <div class="modal-header">
             <div class="modal-title">Update Branch</div>
-            <button class="modal-close" onclick="closeModal('updateModal')">✕</button>
+            <button class="modal-close" onclick="closeModal('updateModal')">&#10005;</button>
         </div>
         <div class="modal-body">
             <input type="hidden" id="updateBranchId"/>
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Street</label>
-                    <input class="form-input" type="text" id="updateStreet" placeholder="Street address"/>
+            <input type="hidden" id="updateAddressId"/>
+
+            <div style="margin-bottom:18px;">
+                <div style="font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+                            color:var(--gold,#d4af37);margin-bottom:10px;padding-bottom:6px;
+                            border-bottom:1px solid rgba(212,175,55,.18);">
+                    Gold Quantity
                 </div>
-                <div class="form-group">
-                    <label class="form-label">City</label>
-                    <input class="form-input" type="text" id="updateCity" placeholder="City"/>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">State</label>
-                    <input class="form-input" type="text" id="updateState" placeholder="State"/>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Postal Code</label>
-                    <input class="form-input" type="text" id="updatePostal" placeholder="Postal code"/>
+                <div class="form-row">
+                    <div class="form-group" style="max-width:200px;">
+                        <label class="form-label">Quantity (g)</label>
+                        <input class="form-input" type="number" id="updateQty" step="0.01" min="0"/>
+                    </div>
                 </div>
             </div>
-            <div class="form-row">
-                <div class="form-group">
-                    <label class="form-label">Country</label>
-                    <input class="form-input" type="text" id="updateCountry" placeholder="Country"/>
+
+            <div>
+                <div style="font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+                            color:var(--gold,#d4af37);margin-bottom:10px;padding-bottom:6px;
+                            border-bottom:1px solid rgba(212,175,55,.18);">
+                    Address
                 </div>
-                <div class="form-group">
-                    <label class="form-label">Gold Quantity (g)</label>
-                    <input class="form-input" type="number" id="updateQty" placeholder="0.00" step="0.01" min="0"/>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Street</label>
+                        <input class="form-input" type="text" id="updateStreet" placeholder="Street address"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">City</label>
+                        <input class="form-input" type="text" id="updateCity"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">State</label>
+                        <input class="form-input" type="text" id="updateState"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Postal Code</label>
+                        <input class="form-input" type="text" id="updatePostal"/>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Country</label>
+                        <input class="form-input" type="text" id="updateCountry"/>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn-cancel" onclick="closeModal('updateModal')">Cancel</button>
+            <button class="btn-cancel"  onclick="closeModal('updateModal')">Cancel</button>
             <button class="btn-confirm" onclick="submitUpdate()">Save Changes</button>
         </div>
     </div>
 </div>
 
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- FOOTER -->
 <footer>
     <div class="footer-inner">
         <div class="footer-dot"></div>
@@ -766,225 +205,377 @@
 </footer>
 
 <script>
-    /* ═══════════════════════════════════════════
-       CONFIG & STATE
-    ═══════════════════════════════════════════ */
-    const API_BASE = 'http://localhost:8080';
-    let allRows           = [];
-    let filteredRows      = [];
-    let activeUpdateIndex = null;
+    const API_BASE  = 'http://localhost:8080';
+    const PAGE_SIZE = 10;
 
-    /* ═══════════════════════════════════════════
-       HELPERS
-    ═══════════════════════════════════════════ */
-    const fmtQty  = q  => parseFloat(q || 0).toFixed(2);
-    const fmtDate = dt => dt ? new Date(dt).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }) : '—';
+    const S = {
+      mode:'all', params:{}, sort:'none', page:0,
+      totalPages:1, totalElements:0, currentRows:[], _flatCache:null,
+    };
 
-    /* ═══════════════════════════════════════════
-       TOAST
-    ═══════════════════════════════════════════ */
-    function showToast(msg, isError = false) {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.className = 'toast show' + (isError ? ' error' : '');
-      clearTimeout(t._timer);
-      t._timer = setTimeout(() => { t.className = 'toast'; }, 3200);
+    const enc    = v => encodeURIComponent(v || '');
+    const num    = v => parseFloat(v) || 0;
+    const fmtQty = q => (q != null && q !== '') ? parseFloat(q).toFixed(2) : null;
+    const val    = id => (document.getElementById(id)?.value || '').trim();
+
+    function esc(s) {
+      return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     }
 
-    /* ═══════════════════════════════════════════
-       FETCH
-    ═══════════════════════════════════════════ */
-    async function fetchBranches() {
-      const res = await fetch(`${API_BASE}/vendorBranches?projection=vendorBranchView`);
-      if (!res.ok) throw new Error('API failed');
-      const data = await res.json();
-      return data._embedded?.vendorBranches || [];
-    }
-
-    /* ═══════════════════════════════════════════
-       RENDER
-    ═══════════════════════════════════════════ */
-    function renderTable(rows) {
-      const tbody = document.getElementById('branchTableBody');
-
-      if (!rows.length) {
-        tbody.innerHTML = `<tr><td colspan="8" class="state-cell">No branches found matching your filters.</td></tr>`;
-        updateCount(0);
-        return;
-      }
-
-      tbody.innerHTML = rows.map((r, i) => `
-  <tr class="clickable-row"
-      onclick="goToBranch(${r.branchId || i + 1})"
-      style="animation-delay:${i * 0.04}s">
-
-    <td class="td-id">${String(i + 1).padStart(2, '0')}</td>
-
-    <td class="td-city">
-      ${r.address?.city || '—'}
-    </td>
-
-    <td class="td-state">${r.address?.state || '—'}</td>
-    <td class="td-country">${r.address?.country || '—'}</td>
-    <td class="td-address">${r.address?.street || '—'}</td>
-    <td class="td-qty">${fmtQty(r.quantity)} g</td>
-
-    <!-- Show NULL always -->
-    <td class="td-date">NULL</td>
-
-    <td class="td-actions">
-      <div class="actions-wrap">
-        <button class="action-btn btn-edit"
-                onclick="event.stopPropagation(); openUpdate(${i})">
-          ✏ Edit
-        </button>
-      </div>
-    </td>
-
-  </tr>
-`).join('');
-
-      updateCount(rows.length);
-    }
-
-    /* ═══════════════════════════════════════════
-       SUMMARY & COUNT
-    ═══════════════════════════════════════════ */
-    function updateSummary(rows) {
-      const total = rows.reduce((s, r) => s + (parseFloat(r.quantity) || 0), 0);
-      document.getElementById('summaryBranchCount').textContent = rows.length;
-      document.getElementById('summaryTotalQty').textContent    = `${fmtQty(total)} g`;
-    }
-
-    function updateCount(n) {
-      document.getElementById('countBadge').textContent = `${n} ${n === 1 ? 'branch' : 'branches'}`;
-    }
-
-    /* ═══════════════════════════════════════════
-       FILTERS
-    ═══════════════════════════════════════════ */
-    function populateFilters() {
-      const cities = new Set(), states = new Set(), countries = new Set();
-      allRows.forEach(r => {
-        if (r.address?.city)    cities.add(r.address.city);
-        if (r.address?.state)   states.add(r.address.state);
-        if (r.address?.country) countries.add(r.address.country);
-      });
-      fillSelect('cityFilter',    [...cities].sort());
-      fillSelect('stateFilter',   [...states].sort());
-      fillSelect('countryFilter', [...countries].sort());
-    }
-
-    function fillSelect(id, values) {
-      const sel = document.getElementById(id);
-      values.forEach(v => {
-        const o = document.createElement('option');
-        o.value = o.textContent = v;
-        sel.appendChild(o);
-      });
-    }
-
-    function applyFilters() {
-      const city    = document.getElementById('cityFilter').value;
-      const state   = document.getElementById('stateFilter').value;
-      const country = document.getElementById('countryFilter').value;
-
-      filteredRows = allRows.filter(r =>
-        (!city    || r.address?.city    === city)    &&
-        (!state   || r.address?.state   === state)   &&
-        (!country || r.address?.country === country)
-      );
-      renderTable(filteredRows);
-      updateSummary(filteredRows);
-    }
-
-    function resetFilters() {
-      ['cityFilter','stateFilter','countryFilter'].forEach(id => document.getElementById(id).value = '');
-      filteredRows = [...allRows];
-      renderTable(filteredRows);
-      updateSummary(filteredRows);
-    }
-
-    /* ═══════════════════════════════════════════
-       MODALS
-    ═══════════════════════════════════════════ */
-    function openModal(id)  { document.getElementById(id).classList.add('open'); }
-    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-
-    // close on backdrop click
-    document.addEventListener('click', e => {
-      if (e.target.classList.contains('modal-overlay')) {
-        e.target.classList.remove('open');
-      }
-    });
-    // close on Escape
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
-    });
-
-    function openUpdate(index) {
-      activeUpdateIndex = index;
-      const r = filteredRows[index];
-      document.getElementById('updateBranchId').value = r.id || '';
-      document.getElementById('updateStreet').value   = r.address?.street     || '';
-      document.getElementById('updateCity').value     = r.address?.city       || '';
-      document.getElementById('updateState').value    = r.address?.state      || '';
-      document.getElementById('updatePostal').value   = r.address?.postalCode || '';
-      document.getElementById('updateCountry').value  = r.address?.country    || '';
-      document.getElementById('updateQty').value      = r.quantity             || 0;
-      openModal('updateModal');
-    }
-
-
-    /* ═══════════════════════════════════════════
-       SUBMIT HANDLERS
-    ═══════════════════════════════════════════ */
-    async function submitUpdate() {
-      const id      = document.getElementById('updateBranchId').value;
-      const payload = {
-        address: {
-          street:     document.getElementById('updateStreet').value,
-          city:       document.getElementById('updateCity').value,
-          state:      document.getElementById('updateState').value,
-          postalCode: document.getElementById('updatePostal').value,
-          country:    document.getElementById('updateCountry').value,
-        },
-        quantity: parseFloat(document.getElementById('updateQty').value) || 0,
+    function flatten(r) {
+      const a = (r.address && typeof r.address === 'object') ? r.address : r;
+      return {
+        ...r,
+        _street:    a.street     || r.street    || '',
+        _city:      a.city       || r.city       || r.addressCity    || '',
+        _state:     a.state      || r.state      || r.addressState   || '',
+        _country:   a.country    || r.country    || r.addressCountry || '',
+        _postal:    a.postalCode || r.postalCode || '',
+        _addressId: a.addressId  || r.addressId  || null,
       };
+    }
 
-      try {
-        // const res = await fetch(`${API_BASE}/vendorBranches/${id}`, { method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
-        // if (!res.ok) throw new Error();
-        showToast('Branch updated successfully.');
-        closeModal('updateModal');
-        // await init(); // refresh
-      } catch {
-        showToast('Failed to update branch.', true);
+    const getId         = r => r.branchId  ?? r.id ?? '';
+    const getQty        = r => r.quantity  ?? r.goldQuantity ?? null;
+    const getVendorName = r => r.vendors?.vendorName ?? r.vendorName ?? '—';
+
+    function extractRows(data) {
+      if (Array.isArray(data)) return data;
+      return data?._embedded?.vendorBranches
+          || data?._embedded?.vendorBranchProjections
+          || data?.content || [];
+    }
+
+    function buildUrl(page) {
+      const { mode, params } = S;
+      const pg = `page=${page}&size=${PAGE_SIZE}`;
+      switch (mode) {
+        case 'all':        return { url: `/vendorBranches?${pg}`, strategy: 'paged' };
+        case 'city':       return { url: `/vendorBranches/search/findByAddressCity?city=${enc(params.city)}&${pg}`, strategy: 'paged' };
+        case 'state':      return { url: `/vendorBranches/search/findByAddressState?state=${enc(params.state)}&${pg}`, strategy: 'paged' };
+        case 'country':    return { url: `/vendorBranches/search/findByAddressCountry?country=${enc(params.country)}&${pg}`, strategy: 'paged' };
+        case 'postal':     return { url: `/vendorBranches/search/findByAddressPostalCode?postalCode=${enc(params.postalCode)}&page=0&size=9999`, strategy: 'list' };
+        case 'qty':        return { url: `/vendorBranches/search/findByQuantityBetween?min=${params.min}&max=${params.max}&page=0&size=9999`, strategy: 'list' };
+        case 'cityState':  return { url: `/vendorBranches/search/findByAddressCityAndAddressState?city=${enc(params.city)}&state=${enc(params.state)}&page=0&size=9999`, strategy: 'list' };
+        case 'citySearch': return { url: `/vendorBranches/search/findByAddressCityContainingIgnoreCase?pun=${enc(params.query)}&page=0&size=9999`, strategy: 'list' };
+        case 'sortAsc':    return { url: `/vendorBranches/search/findByAddressCityOrderByQuantityAsc?pune=${enc(params.city)}&page=0&size=9999`, strategy: 'list' };
+        case 'sortDesc':   return { url: `/vendorBranches/search/findByAddressCityOrderByQuantityDesc?pune=${enc(params.city)}&page=0&size=9999`, strategy: 'list' };
+        default:           return { url: `/vendorBranches?${pg}`, strategy: 'paged' };
       }
     }
 
-    /* ═══════════════════════════════════════════
-       INIT
-    ═══════════════════════════════════════════ */
-    async function init() {
-      document.getElementById('branchTableBody').innerHTML =
-        `<tr><td colspan="8" class="state-cell"><span class="loader"></span>Loading branches…</td></tr>`;
+    async function loadPage(page) {
+      showLoading();
       try {
-        allRows      = await fetchBranches();
-        filteredRows = [...allRows];
-        populateFilters();
-        renderTable(filteredRows);
-        updateSummary(filteredRows);
+        const { url, strategy } = buildUrl(page);
+        if (strategy === 'paged') {
+          const data = await apiFetch(url);
+          const rows = extractRows(data).map(flatten);
+          const meta = data.page || {};
+          S.page = page; S.totalElements = meta.totalElements ?? rows.length;
+          S.totalPages = meta.totalPages ?? 1; S.currentRows = rows; S._flatCache = null;
+        } else {
+          if (S._flatCache === null) {
+            const data = await apiFetch(url);
+            let rows = extractRows(data).map(flatten);
+            if (S.sort === 'asc')  rows.sort((a,b) => num(getQty(a)) - num(getQty(b)));
+            if (S.sort === 'desc') rows.sort((a,b) => num(getQty(b)) - num(getQty(a)));
+            S._flatCache = rows; S.totalElements = rows.length;
+            S.totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+          }
+          S.page = page;
+          S.currentRows = S._flatCache.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+        }
+        renderTable(); renderPagination(); updateSummary();
       } catch (err) {
         console.error(err);
         document.getElementById('branchTableBody').innerHTML =
-          `<tr><td colspan="8" class="state-cell">Failed to load data. Make sure the backend is running on port 8080.</td></tr>`;
+          `<tr><td colspan="9" class="table-empty">&#9888; Cannot connect to server &mdash; make sure the backend is running on port 8080.</td></tr>`;
+        document.getElementById('pgInfo').textContent = '—';
+        document.getElementById('pgControls').innerHTML = '';
+        showToast('Failed to load data. Check backend connection.', true);
       }
     }
-    function goToBranch(id) {
-      window.location.href = `Member3Page2.html?id=${id}`;
+
+    async function apiFetch(path) {
+      const res = await fetch(`${API_BASE}${path}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return res.json();
     }
 
+    function renderTable() {
+      const tbody = document.getElementById('branchTableBody');
+      if (!S.currentRows.length) {
+        tbody.innerHTML = `<tr><td colspan="9" class="table-empty">No branches match your criteria.</td></tr>`;
+        document.getElementById('countBadge').textContent = '0 branches';
+        return;
+      }
+      const offset = S.page * PAGE_SIZE;
+      tbody.innerHTML = S.currentRows.map((r, i) => {
+        const qty        = getQty(r);
+        const qtyFmt     = qty != null ? fmtQty(qty) + '&thinsp;g' : '—';
+        const rowNum     = String(offset + i + 1).padStart(2, '0');
+        const vendorName = esc(String(getVendorName(r)));
+        const branchId   = getId(r);
+        return `
+        <tr style="animation-delay:${i*0.028}s;cursor:pointer;"
+            onclick="window.location.href='Member3Page2.html?id=${branchId}'"
+            title="Click to view branch details">
+          <td class="td-id">${rowNum}</td>
+          <td class="td-city">${esc(r._city)    || '—'}</td>
+          <td class="td-state">${esc(r._state)   || '—'}</td>
+          <td class="td-country">${esc(r._country) || '—'}</td>
+          <td class="td-address">${esc(r._street)  || '—'}</td>
+          <td class="td-date">${esc(r._postal)   || '—'}</td>
+          <td class="td-qty">${qtyFmt}</td>
+          <td class="td-date">${vendorName}</td>
+          <td class="td-actions" onclick="event.stopPropagation()">
+            <div class="actions-wrap">
+              <button class="action-btn btn-update" onclick="openUpdate(${i})" title="Edit branch">
+                &#9998; Edit
+              </button>
+            </div>
+          </td>
+        </tr>`;
+      }).join('');
+      document.getElementById('countBadge').textContent =
+        `${S.totalElements} ${S.totalElements === 1 ? 'branch' : 'branches'}`;
+    }
+
+    function renderPagination() {
+      const { page, totalPages, totalElements } = S;
+      const start = totalElements ? page * PAGE_SIZE + 1 : 0;
+      const end   = Math.min((page + 1) * PAGE_SIZE, totalElements);
+      document.getElementById('pgInfo').textContent =
+        totalElements ? `${start}–${end} of ${totalElements}` : 'No results';
+      const controls = document.getElementById('pgControls');
+      controls.innerHTML = '';
+      if (totalPages <= 1) return;
+      const mkBtn = (label, pg, disabled, active) => {
+        const b = document.createElement('button');
+        b.className = 'pg-btn' + (active ? ' active' : '');
+        b.innerHTML = label; b.disabled = disabled;
+        if (!disabled && !active) b.onclick = () => loadPage(pg);
+        controls.appendChild(b);
+      };
+      const mkDots = () => { const s = document.createElement('span'); s.className = 'pg-ellipsis'; s.textContent = '…'; controls.appendChild(s); };
+      mkBtn('&#8249;', page - 1, page === 0, false);
+      const lo = Math.max(0, page - 2), hi = Math.min(totalPages - 1, page + 2);
+      if (lo > 0) { mkBtn('1', 0, false, false); if (lo > 1) mkDots(); }
+      for (let i = lo; i <= hi; i++) mkBtn(i + 1, i, false, i === page);
+      if (hi < totalPages - 1) { if (hi < totalPages - 2) mkDots(); mkBtn(totalPages, totalPages - 1, false, false); }
+      mkBtn('&#8250;', page + 1, page >= totalPages - 1, false);
+    }
+
+    function updateSummary() {
+      let totalQtyStr = '—';
+      if (S._flatCache) {
+        const sum = S._flatCache.reduce((acc, r) => acc + num(getQty(r)), 0);
+        totalQtyStr = sum.toFixed(2) + ' g';
+      }
+      document.getElementById('summaryBranchCount').textContent = S.totalElements || '—';
+      document.getElementById('summaryTotalQty').textContent    = totalQtyStr;
+      document.getElementById('summaryFilterLabel').textContent = modeLabel();
+      document.getElementById('pageSubtitle').textContent       = modeLabel();
+    }
+
+    function modeLabel() {
+      const { mode, params } = S;
+      return ({ all:'All Branches', city:`City: ${params.city}`, state:`State: ${params.state}`,
+        country:`Country: ${params.country}`, postal:`Postal: ${params.postalCode}`,
+        qty:`Qty ${params.min} \u2013 ${params.max}\u202fg`, cityState:`${params.city}, ${params.state}`,
+        citySearch:`City contains \u201c${params.query}\u201d`,
+        sortAsc:`${params.city} \u00b7 Qty \u2191`, sortDesc:`${params.city} \u00b7 Qty \u2193`,
+      })[mode] || 'Filtered View';
+    }
+
+    function applyFilters() {
+      const citySearch = val('citySearchInp'), city = val('cityFilter'), st = val('stateFilter');
+      const country = val('countryFilter'), postal = val('postalFilter'), sortVal = val('sortSelect');
+      S.sort = sortVal; S._flatCache = null;
+      if      (citySearch)                 setMode('citySearch', { query: citySearch });
+      else if (postal)                     setMode('postal',     { postalCode: postal });
+      else if (city && st)                 setMode('cityState',  { city, state: st });
+      else if (city && sortVal === 'asc')  setMode('sortAsc',    { city });
+      else if (city && sortVal === 'desc') setMode('sortDesc',   { city });
+      else if (city)                       setMode('city',       { city });
+      else if (st)                         setMode('state',      { state: st });
+      else if (country)                    setMode('country',    { country });
+      else                                 setMode('all',        {});
+      loadPage(0);
+    }
+
+    function applyQtyRange() {
+      const min = val('qtyMin'), max = val('qtyMax');
+      if (!min || !max) { showToast('Enter both Min and Max quantity.', true); return; }
+      S._flatCache = null; setMode('qty', { min, max }); loadPage(0);
+    }
+
+    function resetAll() {
+      ['citySearchInp','cityFilter','stateFilter','countryFilter','postalFilter','qtyMin','qtyMax'].forEach(id => {
+        const el = document.getElementById(id); if (el) el.value = '';
+      });
+      document.getElementById('sortSelect').value = 'none';
+      S.sort = 'none'; S._flatCache = null; setMode('all', {}); updateSortArrow(); loadPage(0);
+    }
+
+    function setMode(mode, params) { S.mode = mode; S.params = params; }
+
+    function toggleColSort() {
+      const next = S.sort === 'none' ? 'asc' : S.sort === 'asc' ? 'desc' : 'none';
+      S.sort = next; document.getElementById('sortSelect').value = next;
+      const city = val('cityFilter') || S.params?.city;
+      if (city && next !== 'none') { S._flatCache = null; setMode(next === 'asc' ? 'sortAsc' : 'sortDesc', { city }); loadPage(0); }
+      else if (next === 'none') { S._flatCache = null; loadPage(S.page); }
+      else if (S._flatCache) {
+        if (next === 'asc')  S._flatCache.sort((a,b) => num(getQty(a)) - num(getQty(b)));
+        if (next === 'desc') S._flatCache.sort((a,b) => num(getQty(b)) - num(getQty(a)));
+        S.currentRows = S._flatCache.slice(S.page * PAGE_SIZE, (S.page + 1) * PAGE_SIZE);
+        renderTable(); renderPagination();
+      } else { loadPage(S.page); }
+      updateSortArrow();
+    }
+
+    function updateSortArrow() {
+      const el = document.getElementById('qtySortArrow'); if (!el) return;
+      el.innerHTML = S.sort === 'asc' ? '&#8593;' : S.sort === 'desc' ? '&#8595;' : '&#8597;';
+      el.style.color = S.sort !== 'none' ? 'var(--gold)' : '';
+      el.style.opacity = S.sort !== 'none' ? '1' : '.45';
+    }
+
+    let _dT;
+    function debouncedSearch() {
+      clearTimeout(_dT);
+      _dT = setTimeout(() => {
+        const q = val('citySearchInp'); S._flatCache = null; S.sort = 'none';
+        setMode(q ? 'citySearch' : 'all', q ? { query: q } : {}); loadPage(0);
+      }, 420);
+    }
+
+    async function populateDropdowns() {
+      try {
+        const data = await apiFetch(`/vendorBranches?page=0&size=500`);
+        const rows = extractRows(data).map(flatten);
+        const u = key => [...new Set(rows.map(r => r[key]).filter(Boolean))].sort();
+        fillSelect('cityFilter', u('_city'), 'All Cities');
+        fillSelect('stateFilter', u('_state'), 'All States');
+        fillSelect('countryFilter', u('_country'), 'All Countries');
+      } catch(e) { console.warn('Dropdown population failed:', e); }
+    }
+
+    function fillSelect(id, items, placeholder) {
+      const sel = document.getElementById(id); if (!sel || sel.tagName !== 'SELECT') return;
+      sel.innerHTML = `<option value="">${placeholder}</option>` +
+        items.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+    }
+
+    function openModal(id)  { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+    async function openUpdate(rowIndex) {
+      const r = S.currentRows[rowIndex];
+      if (!r) return;
+      const branchId = getId(r);
+
+      document.getElementById('updateBranchId').value  = branchId;
+      document.getElementById('updateAddressId').value = r._addressId || '';
+      document.getElementById('updateQty').value       = getQty(r) ?? 0;
+      document.getElementById('updateStreet').value    = r._street  || '';
+      document.getElementById('updateCity').value      = r._city    || '';
+      document.getElementById('updateState').value     = r._state   || '';
+      document.getElementById('updatePostal').value    = r._postal  || '';
+      document.getElementById('updateCountry').value   = r._country || '';
+
+      openModal('updateModal');
+
+      /* Resolve addressId from association link if not already cached */
+      if (!r._addressId) {
+        try {
+          const addrData   = await apiFetch(`/vendorBranches/${branchId}/address`);
+          const resolvedId = addrData?.addressId ?? addrData?.id ?? null;
+          if (resolvedId) {
+            document.getElementById('updateAddressId').value = resolvedId;
+            r._addressId = resolvedId;
+          }
+        } catch(e) { console.warn('Could not resolve addressId:', e); }
+      }
+    }
+
+    async function submitUpdate() {
+      const branchId  = document.getElementById('updateBranchId').value;
+      const addressId = document.getElementById('updateAddressId').value;
+      if (!branchId) { showToast('Branch ID missing.', true); return; }
+
+      const qty = parseFloat(document.getElementById('updateQty').value);
+      if (isNaN(qty) || qty < 0) { showToast('Enter a valid quantity.', true); return; }
+
+      const addrPayload = {
+        street:     document.getElementById('updateStreet').value.trim(),
+        city:       document.getElementById('updateCity').value.trim(),
+        state:      document.getElementById('updateState').value.trim(),
+        postalCode: document.getElementById('updatePostal').value.trim(),
+        country:    document.getElementById('updateCountry').value.trim(),
+      };
+
+      if (Object.values(addrPayload).some(v => !v)) { showToast('All address fields are required.', true); return; }
+
+      let errors = [];
+
+      /* 1. PATCH branch quantity */
+      try {
+        const res = await fetch(`${API_BASE}/vendorBranches/${branchId}`, {
+          method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ quantity: qty }),
+        });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      } catch(e) { errors.push('quantity update failed'); console.error(e); }
+
+      /* 2. PATCH address via /addresses/{addressId} */
+      if (addressId) {
+        try {
+          const res = await fetch(`${API_BASE}/addresses/${addressId}`, {
+            method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(addrPayload),
+          });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        } catch(e) { errors.push('address update failed'); console.error(e); }
+      } else {
+        errors.push('address ID not found — address not updated');
+      }
+
+      if (errors.length === 0) {
+        showToast('Branch updated successfully.');
+        closeModal('updateModal');
+        S._flatCache = null;
+        loadPage(S.page);
+      } else {
+        showToast('Some updates failed: ' + errors.join(', ') + '.', true);
+      }
+    }
+
+    function showToast(msg, isError = false) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.className = 'toast show' + (isError ? ' error' : '');
+      clearTimeout(t._t); t._t = setTimeout(() => { t.className = 'toast'; }, 3400);
+    }
+
+    function showLoading() {
+      document.getElementById('branchTableBody').innerHTML =
+        `<tr><td colspan="9" class="table-loading"><span class="loader"></span>Loading branches&#8230;</td></tr>`;
+    }
+
+    document.addEventListener('click', e => {
+      if (e.target.classList.contains('modal-overlay')) e.target.classList.remove('open');
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
+      if (e.key === 'Enter') {
+        const id = document.activeElement?.id;
+        if (['cityFilter','stateFilter','countryFilter','postalFilter','citySearchInp'].includes(id)) applyFilters();
+      }
+    });
+
+    async function init() { showLoading(); await populateDropdowns(); await loadPage(0); }
     document.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
