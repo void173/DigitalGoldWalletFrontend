@@ -150,12 +150,43 @@
             .dashboard-grid { flex-direction: column; }
             .card-details { flex: 1 1 auto; width: 100%; }
         }
+        .breadcrumb {
+    width: 90%;
+    margin: 0 auto 20px auto;
+    color: #aaa;
+    font-size: 0.85rem;
+}
+
+.breadcrumb span {
+    cursor: pointer;
+}
+
+.breadcrumb .separator {
+    margin: 0 8px;
+    color: #555;
+}
+
+.breadcrumb .active {
+    color: var(--gold);
+    cursor: default;
+}
+
+.breadcrumb span:hover:not(.active) {
+    color: var(--gold);
+}
     </style>
 </head>
 <body>
+<div class="breadcrumb">
+    <span onclick="goHome()">Home</span>
+    <span class="separator">/</span>
+    <span onclick="goMembers()">Members</span>
+    <span class="separator">/</span>
+    <span class="active">User Dashboard</span>
+</div>
 
 <h1>Portfolio Overview</h1>
-<div class="subtitle">Secure Asset Management Portal</div>
+<div class="subtitle">Asset Management Portal</div>
 
 <div class="dashboard-grid">
     <div class="card card-details">
@@ -289,6 +320,9 @@
             console.error("ERROR:", err);
         }
     }
+    function goMembers() {
+    window.location.href = "/Member5Page1"; // your members page route
+}
 
     loadDashboard();
 </script>
