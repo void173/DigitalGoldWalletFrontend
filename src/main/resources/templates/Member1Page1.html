@@ -152,6 +152,26 @@
             margin-bottom: 20px;
         }
 
+        .back-btn{
+            position:absolute;
+            top:20px;
+            left:20px;
+        }
+
+        .back-btn button{
+            background: transparent;
+            border:1px solid var(--gold);
+            color: var(--gold);
+            padding:8px 14px;
+            cursor:pointer;
+            font-weight:600;
+        }
+
+        .back-btn button:hover{
+            background: var(--gold);
+            color:black;
+        }
+
         .modal-form { display: flex; flex-direction: column; gap: 15px; }
 
         .modal-form label { font-size: 0.75rem; color: #888; text-transform: uppercase; }
@@ -161,6 +181,10 @@
     </style>
 </head>
 <body>
+
+<div class="back-btn">
+    <button onclick="goBack()">Back</button>
+</div>
 
 <h2>Vault Members</h2>
 <div class="subtitle">Digital Finance • Gold Backed</div>
@@ -216,6 +240,30 @@
                 <label>Email Address</label><br>
                 <input type="email" id="inputEmail" style="width: 100%; box-sizing: border-box;">
             </div>
+            <div id="field-street">
+                <label>Street</label><br>
+                <input type="text" id="inputStreet" style="width: 100%; box-sizing: border-box;">
+            </div>
+
+            <div id="field-city">
+                <label>City</label><br>
+                <input type="text" id="inputCity" style="width: 100%; box-sizing: border-box;">
+            </div>
+
+            <div id="field-state">
+                <label>State</label><br>
+                <input type="text" id="inputState" style="width: 100%; box-sizing: border-box;">
+            </div>
+
+            <div id="field-postal">
+                <label>Postal Code</label><br>
+                <input type="text" id="inputPostal" style="width: 100%; box-sizing: border-box;">
+            </div>
+
+            <div id="field-country">
+                <label>Country</label><br>
+                <input type="text" id="inputCountry" style="width: 100%; box-sizing: border-box;">
+            </div>
             <div id="field-amount" style="display: none;">
                 <label>Deposit Amount (INR)</label><br>
                 <input type="number" id="inputAmount" style="width: 100%; box-sizing: border-box;">
@@ -269,6 +317,10 @@
                 }
 
                 modal.style.display = 'flex';
+            }
+
+            function goBack(){
+                window.location.href = "/";
             }
 
             function closeModal() { modal.style.display = 'none'; }
