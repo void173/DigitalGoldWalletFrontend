@@ -177,10 +177,40 @@
         .modal-form label { font-size: 0.75rem; color: #888; text-transform: uppercase; }
 
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        .breadcrumb {
+    width: 90%;
+    margin: 0 auto 20px auto;
+    color: #aaa;
+    font-size: 0.85rem;
+}
+
+.breadcrumb span {
+    cursor: pointer;
+}
+
+.breadcrumb .separator {
+    margin: 0 8px;
+    color: #555;
+}
+
+.breadcrumb .active {
+    color: var(--gold);
+    cursor: default;
+}
+
+.breadcrumb span:hover:not(.active) {
+    color: var(--gold);
+}
 
     </style>
 </head>
 <body>
+<div class="breadcrumb">
+    <span onclick="goHome()">Home</span>
+    <span class="separator">/</span>
+    <span class="active">Members</span>
+</div>
+
 
 <div class="back-btn">
     <button onclick="goBack()">Back</button>
@@ -455,6 +485,9 @@ function createPagination(totalPages){
                 currentURL=BASE_URL;
                 loadUsers(0);
             }
+            function goHome() {
+    window.location.href = "/"; // or your home page route
+}
 
             loadUsers();
 </script>
