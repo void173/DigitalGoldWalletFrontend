@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendors</title>
+    <style>
+        :root {
+      --gold: #C9973F;
+      --gold-dim: #9a7830;
+      --gold-pale: #e8c97a;
+      --bg: #080705;
+      --card-bg: #0f0d09;
+      --border: #252018;
+      --text: #ede6d8;
+      --muted: #8a7e6a;
+    }
+
+    /* RESET */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(circle at top, #0f0d09, #000);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* TITLE */
+    h1 {
+      text-align: center;
+      font-size: 2.4rem;
+      margin-top: 40px;
+      font-family: "Cormorant Garamond", serif;
+      color: var(--gold);
+      letter-spacing: 1px;
+    }
+
+    /* STATUS */
+    #status {
+      text-align: center;
+      margin-top: 10px;
+      color: var(--muted);
+    }
+
+    /* TABLE WRAPPER */
+    table {
+      width: 92%;
+      margin: 30px auto;
+      border-collapse: collapse;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      min-width: 900px;
+    }
+
+    /* SCROLL WRAPPER (IMPORTANT) */
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      padding: 0 20px;
+    }
+
+    /* HEADER */
+    th {
+      background: #0c0a07;
+      color: var(--gold-pale);
+      padding: 14px;
+      font-size: 12px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* CELLS */
+    td {
+      padding: 14px;
+      border-bottom: 1px solid #1a1712;
+      color: var(--text);
+      font-size: 0.92rem;
+    }
+
+    tr:hover {
+      background: rgba(201,151,63,0.06);
+      transition: 0.2s;
+    }
+
+    /* BUTTONS */
+    .action-btn {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .physical-btn {
+      background: rgba(178,34,34,0.15);
+      color: #ff8b8b;
+      border-color: #3a1a1a;
+    }
+
+    .physical-btn:hover {
+      background: rgba(178,34,34,0.3);
+    }
+
+    .virtual-btn {
+      background: rgba(30,144,255,0.12);
+      color: #8cc6ff;
+      border-color: #1b2f44;
+    }
+
+    .virtual-btn:hover {
+      background: rgba(30,144,255,0.25);
+    }
+
+    /* LOADING */
+    .loading {
+      text-align: center;
+      color: var(--muted);
+      padding: 20px;
+    }
+
+    .error {
+      color: #ff6b6b;
+      text-align: center;
+    }
+        .physical-btn {
+      background: transparent !important;
+      border: 1px solid #3a2e16 !important;
+      color: #e8c97a !important;
+    }
+
+    .physical-btn:hover {
+      background: rgba(201,151,63,0.12) !important;
+    }
+
+    .virtual-btn {
+      background: transparent !important;
+      border: 1px solid #3a2e16 !important;
+      color: #e8c97a !important;
+    }
+
+    .virtual-btn:hover {
+      background: rgba(201,151,63,0.12) !important;
+    }
+        .create-branch-btn {
+    background: rgba(46,204,113,0.15) !important;
+    color: #2ecc71 !important;
+    border-color: #1e3a2f !important;
+    }
+
+    .update-price-btn {
+        background: rgba(241,196,15,0.15) !important;
+        color: #f1c40f !important;
+        border-color: #3d2e00 !important;
+    }
+
+    .create-branch-btn:hover, .update-price-btn:hover {
+        background: rgba(201,151,63,0.25) !important;
+        transform: scale(1.05);
+    }
+        /* ====================== MODALS ====================== */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 30px;
+    width: 440px;
+    color: var(--text);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+}
+
+.modal-content h2 {
+    color: var(--gold);
+    text-align: center;
+    margin-bottom: 22px;
+    font-size: 1.5rem;
+}
+
+.modal-content label {
+    display: block;
+    margin: 14px 0 6px;
+    color: var(--muted);
+    font-size: 0.92rem;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 11px 14px;
+    background: #0c0a07;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 1rem;
+    margin-bottom: 8px;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+    justify-content: flex-end;
+}
+
+.modal-buttons button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+}
+
+.cancel-btn {
+    background: transparent;
+    color: var(--muted);
+}
+
+.confirm-btn {
+    background: var(--gold) !important;
+    color: #000 !important;
+    border-color: var(--gold) !important;
+}
+
+.confirm-btn:hover {
+    background: var(--gold-pale) !important;
+    transform: scale(1.04);
+}
+
+.cancel-btn:hover {
+    background: rgba(201,151,63,0.15);
+}
+        /* ====================== SEARCH BAR ====================== */
+.search-container {
+    width: 92%;
+    margin: 20px auto 15px;
+    position: relative;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 14px 20px 14px 45px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-size: 1rem;
+    outline: none;
+}
+
+#searchInput:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201, 151, 63, 0.15);
+}
+
+#searchInput::placeholder {
+    color: var(--muted);
+}
+
+/* Search Icon */
+.search-container::before {
+    content: "🔍";
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.1rem;
+    color: var(--muted);
+    pointer-events: none;
+}
+      /* ====================== SEARCH + FILTER BAR ====================== */
+.search-filter-bar {
+    width: 92%;
+    margin: 25px auto 15px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    max-width: 1400px;
+}
+
+.search-box {
+    flex: 1;
+    position: relative;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 14px 20px 14px 48px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    font-size: 1rem;
+    outline: none;
+}
+
+#searchInput:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201, 151, 63, 0.2);
+}
+
+#searchInput::placeholder {
+    color: var(--muted);
+}
+
+/* Search Icon */
+.search-box::before {
+    content: "🔍";
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.15rem;
+    color: var(--muted);
+    pointer-events: none;
+}
+
+/* Filter Button */
+.filter-btn {
+    padding: 14px 24px;
+    background: #C9973F;
+    color: #000;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.98rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    box-shadow: 0 4px 10px rgba(201, 151, 63, 0.3);
+}
+
+.filter-btn:hover {
+    background: #e8c97a;
+    transform: translateY(-2px);
+}
+    </style>
+</head>
+<body>
+
+<h1>Vendors List</h1>
+<p id="status" class="loading"></p>
+<!-- Search + Filter Bar -->
+<div class="search-filter-bar">
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search vendors by name..." autocomplete="off">
+    </div>
+
+    <button id="filterBtn" class="filter-btn">
+        Filter
+    </button>
+</div>
+
+
+
+<table id="vendorsTable">
+    <thead>
+    <tr>
+        <th>Vendor Name</th>
+        <th>Description</th>
+        <th>Contact Person</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Total Gold Qty</th>
+        <th>Current Price</th>
+        <th style="width: 220px;">Actions</th>
+        <th style="width: 180px;">Vendor Management</th>
+    </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<!-- ==================== CREATE BRANCH MODAL ==================== -->
+<div id="createBranchModal" class="modal">
+    <div class="modal-content">
+        <h2>Create New Branch</h2>
+
+        <label>Branch Name</label>
+        <input type="text" id="branchName" value="Main Branch">
+
+        <label>Initial Gold Quantity (grams)</label>
+        <input type="number" id="branchQuantity" value="100.00" step="0.01" min="0.01">
+
+        <label>Street Address</label>
+        <input type="text" id="branchStreet" value="123, MG Road">
+
+        <label>City</label>
+        <input type="text" id="branchCity" value="Pune">
+
+        <label>State</label>
+        <input type="text" id="branchState" value="Maharashtra">
+
+        <div class="modal-buttons">
+            <button class="cancel-btn" onclick="closeCreateModal()">Cancel</button>
+            <button class="confirm-btn" onclick="submitCreateBranch()">Create Branch</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== UPDATE GOLD PRICE MODAL ==================== -->
+<div id="updatePriceModal" class="modal">
+    <div class="modal-content">
+        <h2>Update Current Gold Price</h2>
+
+        <label>New Price per Gram (₹)</label>
+        <input type="number" id="newGoldPrice" value="6500.75" step="0.01" min="0.01">
+
+        <div class="modal-buttons">
+            <button class="cancel-btn" onclick="closePriceModal()">Cancel</button>
+            <button class="confirm-btn" onclick="submitUpdatePrice()">Update Price</button>
+        </div>
+    </div>
+</div>
+<!-- Filter Modal -->
+<div id="filterModal" class="modal">
+    <div class="modal-content" style="width: 480px;">
+        <h2>Filter Vendors</h2>
+
+        <label>Price Range (₹ per gram)</label>
+        <div style="display: flex; gap: 10px;">
+            <input type="number" id="minPrice" placeholder="Min Price" step="0.01">
+            <input type="number" id="maxPrice" placeholder="Max Price" step="0.01">
+        </div>
+
+        <label>Quantity Range (grams)</label>
+        <div style="display: flex; gap: 10px;">
+            <input type="number" id="minQty" placeholder="Min Quantity" step="0.01">
+            <input type="number" id="maxQty" placeholder="Max Quantity" step="0.01">
+        </div>
+
+        <div class="modal-buttons" style="margin-top: 30px;">
+            <button class="cancel-btn" onclick="closeFilterModal()">Cancel</button>
+            <button class="confirm-btn" onclick="applyFilters()">Apply Filters</button>
+            <button class="cancel-btn" onclick="clearFilters()" style="margin-left: auto;">Clear All</button>
+        </div>
+    </div>
+</div>
+<script src="js/sjvendors.js"></script>
+
+</body>
+</html>
