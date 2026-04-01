@@ -152,6 +152,26 @@
             margin-bottom: 20px;
         }
 
+        .back-btn{
+            position:absolute;
+            top:20px;
+            left:20px;
+        }
+
+        .back-btn button{
+            background: transparent;
+            border:1px solid var(--gold);
+            color: var(--gold);
+            padding:8px 14px;
+            cursor:pointer;
+            font-weight:600;
+        }
+
+        .back-btn button:hover{
+            background: var(--gold);
+            color:black;
+        }
+
         .modal-form { display: flex; flex-direction: column; gap: 15px; }
 
         .modal-form label { font-size: 0.75rem; color: #888; text-transform: uppercase; }
@@ -161,6 +181,10 @@
     </style>
 </head>
 <body>
+
+<div class="back-btn">
+    <button onclick="goBack()">Back</button>
+</div>
 
 <h2>Vault Members</h2>
 <div class="subtitle">Digital Finance • Gold Backed</div>
@@ -216,6 +240,30 @@
                 <label>Email Address</label><br>
                 <input type="email" id="inputEmail" style="width: 100%; box-sizing: border-box;">
             </div>
+            <div id="field-street">
+                <label>Street</label><br>
+                <input type="text" id="inputStreet" style="width: 100%; box-sizing: border-box;">
+            </div>
+
+            <div id="field-city">
+                <label>City</label><br>
+                <input type="text" id="inputCity" style="width: 100%; box-sizing: border-box;">
+            </div>
+
+            <div id="field-state">
+                <label>State</label><br>
+                <input type="text" id="inputState" style="width: 100%; box-sizing: border-box;">
+            </div>
+
+            <div id="field-postal">
+                <label>Postal Code</label><br>
+                <input type="text" id="inputPostal" style="width: 100%; box-sizing: border-box;">
+            </div>
+
+            <div id="field-country">
+                <label>Country</label><br>
+                <input type="text" id="inputCountry" style="width: 100%; box-sizing: border-box;">
+            </div>
             <div id="field-amount" style="display: none;">
                 <label>Deposit Amount (INR)</label><br>
                 <input type="number" id="inputAmount" style="width: 100%; box-sizing: border-box;">
@@ -238,6 +286,18 @@
             /* --- MODAL LOGIC --- */
             const modal = document.getElementById('uiModal');
             const modalSubmitBtn = document.getElementById('modalSubmitBtn');
+
+            function formatDate(dateString){
+    const date = new Date(dateString);
+
+    const day = String(date.getDate()).padStart(2,'0');
+
+    const month = date.toLocaleString('default',{month:'long'});
+
+    const year = date.getFullYear();
+
+    return `${day} ${month} ${year}`;
+}
 
             function showModal(mode, data = {}) {
                 // Reset fields
@@ -271,6 +331,10 @@
                 modal.style.display = 'flex';
             }
 
+            function goBack(){
+                window.location.href = "/";
+            }
+
             function closeModal() { modal.style.display = 'none'; }
 
             /* --- FUNCTIONALITY --- */
@@ -291,7 +355,7 @@
                                 <td>${user.name}</td>
                                 <td>${user.email}</td>
                                 <td>₹${user.balance}</td>
-                                <td>${user.createdAt}</td>
+                                <td>${formatDate(user.createdAt)}</td>
                                 <td onclick="event.stopPropagation()">
                                     <button onclick="showModal('deposit', {id: ${userId}})">Deposit</button>
                                     <button class="btn-outline" onclick="showModal('edit', {id: ${userId}, name: '${user.name}', email: '${user.email}'})">Edit</button>
@@ -319,19 +383,52 @@
                 }).then(() => { closeModal(); loadUsers(currentPage); });
             }
 
-            function executeAddUser() {
-                const name = document.getElementById('inputName').value;
-                const email = document.getElementById('inputEmail').value;
-                if(!name || !email) return;
-                fetch(BASE_URL,{
-                    method:"POST",
-                    headers:{"Content-Type":"application/json"},
-                    body:JSON.stringify({name, email})
-                }).then(res=>{
-                    if(!res.ok) alert("Email exists!");
-                    else { closeModal(); loadUsers(); }
-                });
-            }
+async function executeAddUser(){
+
+    const addressData = {
+        street: document.getElementById("inputStreet").value,
+        city: document.getElementById("inputCity").value,
+        state: document.getElementById("inputState").value,
+        postalCode: document.getElementById("inputPostal").value,
+        country: document.getElementById("inputCountry").value
+    };
+
+    // CREATE ADDRESS
+    const addressRes = await fetch(BACKEND_URL + "/addresses",{
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify(addressData)
+    });
+
+    const addressJson = await addressRes.json();
+    const addressURL = addressJson._links.self.href;
+
+    // CREATE USER
+    const userRes = await fetch(BACKEND_URL + "/users",{
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({
+            name: document.getElementById("inputName").value,
+            email: document.getElementById("inputEmail").value
+        })
+    });
+
+    const userJson = await userRes.json();
+    const userURL = userJson._links.self.href;
+
+    console.log("User URL:", userURL);
+    console.log("Address URL:", addressURL);
+
+    // ATTACH ADDRESS
+    await fetch(userURL + "/address",{
+        method:"PUT",
+        headers:{ "Content-Type":"text/uri-list" },
+        body: addressURL
+    });
+
+    closeModal();
+    loadUsers();
+}
 
             // Search and View functions remain same
 function viewUser(userId){
