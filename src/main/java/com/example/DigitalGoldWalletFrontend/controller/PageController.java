@@ -16,4 +16,14 @@ public class PageController {
         return "Member1Page2";
     }
 
+    @GetMapping("/Member5Page1")
+    public String page51() {
+        return "Member5Page1";
+    }
+
+    @GetMapping("/Member5Page2")
+    public String page52() {
+        return "Member5Page2";
+    }
+
 }

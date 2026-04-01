@@ -410,9 +410,40 @@
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
             transform: translateY(-2px);
         }
+        .breadcrumb {
+    width: 90%;
+    margin: 0 auto 20px auto;
+    color: #aaa;
+    font-size: 0.85rem;
+}
+
+.breadcrumb span {
+    cursor: pointer;
+}
+
+.breadcrumb .separator {
+    margin: 0 8px;
+    color: #555;
+}
+
+.breadcrumb .active {
+    color: var(--gold);
+    cursor: default;
+}
+
+.breadcrumb span:hover:not(.active) {
+    color: var(--gold);
+}
     </style>
 </head>
 <body>
+<div class="breadcrumb">
+    <span onclick="goHome()">Home</span>
+    <span class="separator">/</span>
+    <span onclick="goMembers()">Members</span>
+    <span class="separator">/</span>
+    <span class="active">User Dashboard</span>
+</div>
 
 <h2>Account Profile</h2>
 <table id="userDetails"></table>
@@ -453,21 +484,62 @@
                 return params.get("userId");
             }
 
+            function formatDate(dateString){
+    const date = new Date(dateString);
+
+    const day = String(date.getDate()).padStart(2,'0');
+
+    const month = date.toLocaleString('default',{month:'long'});
+
+    const year = date.getFullYear();
+
+    return `${day} ${month} ${year}`;
+}
+
             function loadUser(){
-                const userId=getUserId();
-                fetch(`${BASE_URL}/${userId}`)
-                .then(res=>res.json())
-                .then(user=>{
-                    const table=document.getElementById("userDetails");
-                    table.innerHTML=`
-                        <tr><th>User ID</th><td>#${userId}</td></tr>
-                        <tr><th>Name</th><td>${user.name}</td></tr>
-                        <tr><th>Email</th><td>${user.email}</td></tr>
-                        <tr><th>Wallet Balance</th><td>₹ ${user.balance}</td></tr>
-                        <tr><th>Member Since</th><td>${user.createdAt}</td></tr>
-                    `;
-                });
+    const userId=getUserId();
+
+    fetch(`${BASE_URL}/${userId}`)
+    .then(res=>res.json())
+    .then(user=>{
+
+        const addressLink = user._links.address.href;
+
+        fetch(addressLink)
+        .then(res=>{
+            if(!res.ok){
+                return null;   // address not found
             }
+            return res.json();
+        })
+        .then(address=>{
+
+            let addressText = "Not Available";
+
+            if(address){
+                addressText = `
+                    ${address.street || ""}
+                    ${address.city || ""}
+                    ${address.state || ""}
+                    ${address.postalCode || ""}
+                    ${address.country || ""}
+                `;
+            }
+
+            const table=document.getElementById("userDetails");
+
+            table.innerHTML=`
+                <tr><th>User ID</th><td>#${userId}</td></tr>
+                <tr><th>Name</th><td>${user.name}</td></tr>
+                <tr><th>Email</th><td>${user.email}</td></tr>
+                <tr><th>Wallet Balance</th><td>₹ ${user.balance}</td></tr>
+                <tr><th>Address</th><td>${addressText}</td></tr>
+                <tr><th>Member Since</th><td>${formatDate(user.createdAt)}</td></tr>
+            `;
+        });
+
+    });
+}
 
             function loadPhysicalTransactions(){
                 const userId=getUserId();
@@ -506,6 +578,9 @@
             }
 
             function goBack(){ window.history.back(); }
+            function goMembers() {
+    window.location.href = "/Member1Page1"; // your members page route
+}
             loadUser();
             loadPhysicalTransactions();
 </script>
